@@ -2,6 +2,12 @@
 
 Description here
 
+---
+
+### Getting Started
+
+Copy/paste everything from software.md here
+
 ### Schedule
 
 #### Daily Schedule
@@ -10,14 +16,14 @@ Description here
 - 12PM Presentations; Tuesdays - Thursdays Speaker Presentations, Fridays Participant Presentations
 - 1PM - 3PM Daily Office Hours
 
-#### Schedule
+#### Event Schedule
 
 | Date | Event | Time | Topic |
 | --- | --- | --- | --- |
 | 7/07 | Daily Lecture | 9AM | Program introduction; Introduction to Git |
 | | Coriell Journal Club | 12PM | Jaroslav Jelinek, MD, PhD |
 | 7/08 | Daily Lecture | 9AM | R: Introduction to the tidyverse, Rmarkdown, and `dplyr` |
-| | BRM Talk | 12PM | JP? |
+| | BRM Talk | 12PM | Jean-Pierre Issa, MD|
 | 7/09 | Daily Lecture | 9AM | R: Plotting with `ggplot2` |
 | | BRM Talk | 12PM | TBD |
 | 7/10 | Daily Lecture | 9AM | How to read a scientific paper |
@@ -44,4 +50,10 @@ Description here
 | 7/30 | Final project work day |
 | | BRE Talk | 12PM | TBD |
 | 7/31 | Final project presentations | 12PM | All participants 10 minute presentation on RNA-seq analyzed | 
+
+---
+
+## BRE Material
+
+#### **July 07** Introduction to Git
 

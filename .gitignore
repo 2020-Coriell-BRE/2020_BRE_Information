@@ -1,0 +1,5 @@
+### system files to ignore
+**.DS_store
+
+### types of files to ignore
+.docx
