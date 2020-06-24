@@ -3,3 +3,10 @@
 
 ### types of files to ignore
 .docx
+.pptx
+
+### subfolders to ignore; will need to update as course goes on
+R/
+RNA-seq/
+final_project
+review_papers
