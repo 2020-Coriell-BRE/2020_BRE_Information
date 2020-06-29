@@ -10,7 +10,7 @@ Some of these programs you'll probably already have installed on your machine, b
 4. R. If you don't already have it installed, go to R Cloud <https://cloud.r-project.org/> to download and install R.
 5. RStudio. Go to RStudio's website <https://rstudio.com/products/rstudio/download/> and download the FREE version.
 6. Cisco AnyConnect VPN. See attached directions in cisco_vpn.pdf
-7. GitHub <https://github.com/> If you don't have a GitHub account already you need to sign up for one; it's free.
+7. GitHub <https://github.com/> If you don't have a GitHub account already you need to sign up for one; it's free. Please also install GitHub Desktop <https://desktop.github.com/>
 
 #### Operating System Specific Programs
 
