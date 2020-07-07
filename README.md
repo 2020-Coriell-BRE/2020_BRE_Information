@@ -86,7 +86,7 @@ The Bioinformatics Research Experience is a four-week research training program 
 
 - Introduction to Coriell's Bioinformatics Research Experience
 - Introduction to all things Git: Git, GitHub, GitHub Desktop and GitHub Classroom
-- [slides](slides/slides/2020-07-07_git.pdf)
+- [slides](slides/2020-07-07_git.pdf)
 
 Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr>
 
