@@ -49,11 +49,11 @@ The Bioinformatics Research Experience is a four-week research training program 
 | 7/07 | Daily Lecture | 9AM | Program introduction; Introduction to Git |
 | | Coriell Journal Club | 12PM | Jaroslav Jelinek, MD, PhD |
 | 7/08 | Daily Lecture | 9AM | R: Introduction to the tidyverse, Rmarkdown, and `dplyr` |
-| | BRE Talk | 12PM | Jean-Pierre Issa, MD|
+| | BRE Talk | 12PM | Jaroslav Jelinek, MD, PhD: Epigenetics and DNA methylation|
 | 7/09 | Daily Lecture | 9AM | R: Plotting with `ggplot2` |
 | | BRE Talk | 12PM | Jozef Madzo, PhD |
 | 7/10 | Daily Lecture | 9AM | How to read a scientific paper |
-| | BRE Talk | 12PM | Jaroslav Jelinek, MD, PhD: Epigenetics and DNA methylation |
+| | BRE Talk | 12PM | TBD |
 | 7/14 | Daily Lecture | 9AM | R: Importing and tidying data with `readr` and `tidyr`|
 | | No talk, Coriell Seminar cancelled |  | |
 | 7/15 | Daily Lecture | 9AM | R: Clustering |
@@ -80,13 +80,21 @@ The Bioinformatics Research Experience is a four-week research training program 
 
 ---
 
+## Resources and References
+
+### git
+
+### R
+
+---
+
 ## BRE Material
 
 #### **July 07** Introduction to Git
 
 - Introduction to Coriell's Bioinformatics Research Experience
 - Introduction to all things Git: Git, GitHub, GitHub Desktop and GitHub Classroom
-- [slides](slides/2020-07-07_git.pdf)
+- [slides](R/2020-07-07_intro_to_git/2020-07-07_git.pdf)
 
 Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr>
 
