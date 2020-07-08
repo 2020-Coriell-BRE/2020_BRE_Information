@@ -1,0 +1,360 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(conflicted)
+
+### resolve conflicts
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE, fig.width = 6, fig.height = 4)
+```
+
+# Introduction to Rmarkdown and `dplyr`
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+## Rmarkdown
+
+### How it Works
+
+R Markdown documents consist of mixtures of two main sections/types: simple plain text and code chunks. What you're reading right now is in plain text. Here you can type whatever you want and add some simple formatting (more on that later). Below, the gray boxes are code chunks. With RStudio as an interface you can run the code directly either by:
+
+1. Clicking the green arrow on the upper right hand side of the code chunk
+2. Clicking "Run Current Chunk" in the "Run" drop down menu above
+3. Hitting `Command` + `Shift` + `Return` on a Mac or `Ctrl` + `Shift` + `Enter` on a PC
+
+**Your cursor must be between the backticks for RStudio to run the correct chunk**
+
+```{r}
+iris
+
+plot(iris$Sepal.Length, iris$Sepal.Width)
+```
+
+### How to Make a Code Chunk
+
+To make a code chunk, type three backticks (\`), follow by a lowercase r between curly braces ({}), hit `Enter`, and finish with three more backticks on the next line.
+
+```{r}
+# this is a code chunk!
+```
+
+## How to Format Your Text
+
+Markdown allows the use of simple symbols to format your plain text.
+
+### Format Text Appearance
+
+Throughout this document, there are a bunch of lines with #s in front of them. The # sign creates headings, lines of the document that are emphasized through some combination of, depending on the interpreter, larger font size, larger line weight/bolding, italicizing, and underling. One # creates the largest header, and with every ## added, headers become smaller and less emphasized.
+
+# Heading 1
+
+## Heading 2 
+
+### Heading 3
+
+#### Heading 4
+
+##### Heading 5
+
+###### Heading 6
+
+---
+
+To make text italicized add one * on either side of it.
+
+*This text will render italicized.*
+
+---
+
+To make text bold, add two ** to either side of it.
+
+**This text will render bold**
+
+### Lists
+
+You can either make an ordered list with numbers, ex:
+
+1. Item 1
+2. Item 2
+3. Item 3
+
+Or make an unordered list, a bullet-point list, ex:
+
+- Item 1
+- Item 2
+- Item 3
+
+### Miscellaneous Formatting
+
+Adding three dashes (-) creates a horizontal line break, ex:
+
+---
+
+You can add inline code with single backticks (\`) around it, ex: `head(iris)`. This code won't execute, but will look like a small code chunk inside the text to an interpreter.
+
+---
+
+You can make a link with square brackets [] followed by parentheses (), with the link text in the brackets and the link address in the parentheses.
+
+[All the material for the class is here](https://2020-coriell-bre.github.io/2020_Bioinformatics_Research_Experience/)
+
+## Output R Markdown in Another File Format
+
+You can output R Markdown files as html, pdf, or word files by clicking `Knit` above. By default, R Markdown will give you an html file, but you can select the format in the dropdown menu beside the `Knit` button. Unlike using an interpreter to make the document look prettier, knitting an R Markdown document will run all the code in code chunks and show you the code and the results of the code in the final document.
+
+
+
+<br><br>
+
+
+
+## Data Manipulation with dplyr
+
+### Setup
+
+Install packages
+
+```{r}
+# uncomment the packages and install
+# install.packages('tidyverse')
+# install.packages('conflicted')
+
+# if the packages aren't loaded run the topmost chunk in this document
+```
+
+### Background R Things
+
+### Tables
+
+```{r}
+iris
+```
+
+### Piping
+
+The pipe operator `%>%` pipes output from one function to the next. You can use this to chain together as many command/functions as desired. For a simple example, instead of calling `head()` on flights, we could have piped flights to `head()`
+
+```{r}
+iris %>% head()
+```
+
+You can chain as many pipes as you want together and you can also pipe into `ggplot()`
+
+```{r}
+iris %>% filter(Species == 'setosa') %>% select(Sepal.Length, Sepal.Width)
+```
+
+### Assignment
+
+The assignment operator, `->` saves the current output as an object (aka a data structure) to whatever name you pick. You can save data of any format this way.
+
+```{r}
+iris %>% filter(Species == 'setosa') %>% select(Sepal.Length, Sepal.Width) -> new_iris
+
+new_iris
+```
+
+### Logicals
+
+These operators are how you compare values to each other. Keep them in mind for subsetting and filtering going forward.
+
+- equals `==`
+- not equal to `!=`
+- greater than `>`
+- greater than or equal to `>=`
+- less than `<`
+- less than or equal to `<=`
+- and `&`
+- or `|`
+
+```{r}
+# Are the numbers equal?
+2 == 5
+
+# Is the first number less than the second number?
+2 < 5
+
+# Is the first number greater than the second number?
+2 > 5
+
+# Are the numbers NOT equal
+2 != 5
+```
+
+
+<br>
+
+
+### dplyr functions
+
+#### `arrange()`
+
+The `arrange()` function allows you to sort the data by some criteria, usually another column in the data. 
+
+```{r}
+### Before arranging the data, let's remember what it looks like
+iris
+
+### arrange() takes, at a minimum, a single column as an argument. It will sort
+### the table by that column in order from least to greatest
+iris %>%
+  arrange(Petal.Width)
+
+### You can sort the data by as many columns as you like, although the changes
+### in the order are smaller with each additional column
+iris %>%
+  arrange(Petal.Width, Petal.Length, Sepal.Length)
+
+### What if you want to sort from largest to smallest? You can use the helper
+### function desc() that changes the sort order from largest to smallest.
+iris %>%
+  arrange(desc(Petal.Width))
+```
+
+### `select()`
+
+The `select()` function allows you to pick only the columns you want
+
+```{r}
+### For the select() function, you just give it the names of the columns you 
+### want. For more complicated selection criteria, you probably need to use 
+### select_if() or select_at() which are beyond the scope of this presentation.
+iris %>%
+  select(Species, Sepal.Length, Sepal.Width)
+
+iris %>%
+  select(Species:Sepal.Width) -> select_example
+select_example
+
+iris %>%
+  select(species = Species, Sepal.Length, Sepal.Width)
+```
+
+### `filter()`
+
+The function `filter()` allows you select a subset of the data according to some criteria. This could be by matching a variable like `sample == 's42'` or could be base on some numberic value like `Sepal.Width < 3 | Sepal.Width > 4`
+
+```{r}
+### filter takes that name of the column you want to filter on and some 
+### logical condition. Here, we'll get only the rows of the table for samples
+### with Sepal.Lengths greater than 4.5 cms.
+iris %>%
+  filter(Sepal.Length > 5.5, Species == 'setosa')
+
+iris %>%
+  filter(Sepal.Length > 5.5 | Species == 'setosa')
+
+### You can filter by as many things as you want
+iris %>%
+  filter(Sepal.Length > 4.5, Species %in% c('virginica', 'versicolor'), 
+         Sepal.Width < 3, Petal.Length > 5, Petal.Width > 1.5)
+```
+
+### `distinct()`
+
+The function `distinct()` gives you all unique values of a given variable.
+
+```{r}
+### distinct() takes the name of the column you want the distinct values of
+iris %>%
+  distinct(Sepal.Width)
+
+### You can give it as many columns as you want although it becomes less and
+### less useful as you add columns
+iris %>%
+  distinct(Species, Sepal.Width)
+```
+
+### `mutate()`
+
+The function `mutate()` adds an additional column onto the table.
+
+```{r}
+iris %>%
+### mutate() needs the name of the new column equal to whatever will go in the
+### new column. Frequently that will be a logical statement based on other
+### data in the table, like in this example where we call any iris with a sepal
+### length less than 5.8 cm small and all the other irises large
+  mutate(flower_size = ifelse(Sepal.Length < 5.8, 'small', 'large'))
+
+### You can make more than one column in the same mutate call. If you supply a
+### single value, it will be used for all rows (recycled).
+iris %>%
+  mutate(flower_size = ifelse(Sepal.Length < 5.8, 'small', 'large'),
+         second_column = 'tidyverse_webinar')
+
+iris %>%
+  mutate(flower_size = case_when(Sepal.Length < 3 ~ 'small',
+                                 Sepal.Length >= 3 & Sepal.Length < 6 ~ 'medium',
+                                 TRUE ~ 'large'))
+```
+
+### `summarize()`
+
+Lets you reduce the data down to some summary statistics or other summary function
+
+```{r}
+### summarize() works similarly to mutate(), but instead of adding an 
+### additional column with an entry for all rows, it will reduce to the number
+### summaries you asked for. Like mutate(), summarize() needs the name of the
+### summary column equal to the calculation you're making. Here, we'll make the
+### summary column "average" which is equal to the mean of the petal lengths
+iris %>%
+  summarize(average = mean(Petal.Length))
+
+### For most tidyverse functions, either the British or American spellings can
+### be used. Frequently the British spelling comes up by default because Hadley
+### Wickham is from New Zealand.
+iris %>%
+  summarise(average = mean(Petal.Length))
+
+### summarize() is very powerful when used with group_by(). group_by() causes 
+### all functions later in the pipeline to be applied over the specified group
+iris %>%
+  group_by(Species) %>%
+  summarize(average = mean(Petal.Length))
+
+### Don't forget to ungroup() because grouping will mess up your code later
+iris %>%
+  group_by(Species) %>%
+  summarize(average = mean(Petal.Length)) %>%
+  ungroup()
+
+### You can calculate more than one summary at a time as long as they (for the
+### moment) have a single thing as their output
+iris %>%
+  group_by(Species) %>%
+  summarize(avg_pl = mean(Petal.Length),
+            avg_pw = mean(Petal.Width),
+            sd_pl = sd(Petal.Length),
+            sd_pw = sd(Petal.Width)) %>%
+  ungroup()
+```
+
+#### `count()`
+
+The function `count()` is like a special case of `summarize()`, but all it does is count the number of distinct things in the column(s).
+
+```{r}
+### count() takes the name of the column you want
+iris %>%
+  count(Species)
+
+### It's particularly powerful when combined with group_by(), like summarize() is
+iris %>%
+  mutate(flower_size = ifelse(Sepal.Length < 5.8, 'small', 'large')) %>%
+  group_by(flower_size) %>%
+  count(Species)
+
+### You can also count() multiple things at once
+iris %>%
+  mutate(flower_size = ifelse(Sepal.Length < 5.8, 'small', 'large')) %>%
+  count(Species, flower_size)
+```
+
+
+
