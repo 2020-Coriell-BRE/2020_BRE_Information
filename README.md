@@ -98,6 +98,8 @@ The Bioinformatics Research Experience is a four-week research training program 
 
 Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr>
 
+-
+
 #### **July 08** Introduction to R and the Tidyverse
 
 - Tody we covered:
@@ -107,4 +109,4 @@ Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr
   - dplyr
 - [demo Rmd](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_rmarkdown_and_dplyr_demo.Rmd)
 
-Today's Assignment: **dplyr** <>
+Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>
