@@ -108,5 +108,6 @@ Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr
   - Tidyverse
   - dplyr
 - [demo Rmd](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_rmarkdown_and_dplyr_demo.Rmd)
+- [slides](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_intro_to_r.pdf)
 
 Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>
