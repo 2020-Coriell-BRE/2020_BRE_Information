@@ -1,0 +1,180 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(conflicted)
+
+### resolve conflicts
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 2020-07-08: Data Manipulation with `dplyr`
+
+We'll be using data from the `coronavirus` package for today's assignment. The `coronavirus` dataset has the following columns: 
+
+- `date` = The date of the summary
+- `province` = The province or state, when applicable
+- `country` = The country or region name
+- `lat` = Latitude point
+- `long` = Longitude point
+- `type` = the type of case (i.e., confirmed, death)
+- `cases` = the number of daily cases (corresponding to the case type)
+
+You need to install and load a package to get the data, so make sure you pay attention to the set up steps and run every chunk. 
+
+### Set Up
+
+Install the package with the data
+
+```{r}
+# install.packages("coronavirus")
+```
+
+Load the library. Libraries are collections of functions (and sometimes data like here) that are add ons to base R.
+
+```{r}
+library(coronavirus)
+```
+
+Load the data. The `data()` loads data from packages into R.
+
+```{r}
+# use the data() function to load the data in the package
+data("coronavirus")
+```
+
+Look at the data. Run the chunk and it will give you a nicely formatted preview of the data.
+
+```{r}
+coronavirus
+```
+
+### `dplyr` Basics
+
+The first few questions are a review of the basic `dplyr` functions. Use the code chunk below each question for your answer.
+
+---
+
+1. Use `mutate()` to add an additional column onto the `coronavirus` table
+
+```{r}
+
+```
+
+2. Use `select()` to get only the date, type, and cases columns from the `coronavirus` table
+
+```{r}
+
+```
+
+3. Use `filter()` to find the information for Mexico
+
+```{r}
+
+```
+
+4. Use `summarize()` to find the total number of cases so far
+
+```{r}
+
+```
+
+5. Use `arrange()` to rearrange the coronavirus table by latitute (`lat`) and then longitude (`long`)
+
+```{r}
+
+```
+
+6. Use `count()` to find the total number of data points per `type`
+
+```{r}
+
+```
+
+7. Use `disinct()` to find all the unique countries in the dataset.
+
+```{r}
+
+```
+
+### Combining `dplyr` Functions
+
+In this second section, the questions get a little harder. You'll need to give more than one argument to the dplyr functions and chain multiple functions together. Again, use the code chunk below each question to give your answer.
+
+---
+
+8. Find the minimum and maximum numbers of cases.
+
+```{r}
+
+```
+
+9. Use `arrange()` to rearrange the coronavirus table so the latest date is first. (By latest I mean the closest data to today, for example April 1 2020-04-01 is closer to today than January first 2020-01-01).
+
+```{r}
+
+```
+
+10. Find the total number of cases per country
+
+```{r}
+
+```
+
+11. Find the total number of cases per date
+
+```{r}
+
+```
+
+12. Find the number of cases by country and type
+
+```{r}
+
+```
+
+13. Find the country with the greatest number of cases so far
+
+```{r}
+
+```
+
+14. Find the number of cases per Canadian province.
+
+```{r}
+
+```
+
+15. Find the mean and standard deviation of the cases by country
+
+```{r}
+
+```
+
+16. Add a column to the `coronavirus` table labelling whether the daily case total is greater than or equal to 100
+
+```{r}
+
+```
+
+17. How many countries have average daily case totals greater than 100?
+
+```{r}
+
+```
+
+18. How many countries do we have data for in the northern (lat > 0) and southern (lat < 0) hemispheres?
+
+```{r}
+
+```
+
+
+
+<br><br>
+
+
