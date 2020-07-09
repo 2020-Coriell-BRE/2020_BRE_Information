@@ -90,7 +90,7 @@ The Bioinformatics Research Experience is a four-week research training program 
 
 ## BRE Material
 
-#### **July 07** Introduction to Git
+#### **July 07:** Introduction to Git
 
 - Introduction to Coriell's Bioinformatics Research Experience
 - Introduction to all things Git: Git, GitHub, GitHub Desktop and GitHub Classroom
@@ -100,7 +100,7 @@ Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr
 
 ---
 
-#### **July 08** Introduction to R and the Tidyverse
+#### **July 08:** Introduction to R and the Tidyverse
 
 - Tody we covered:
   - R
@@ -114,10 +114,32 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>
 
 ---
 
-#### **July 09** Plotting with `ggplot2`
+#### **July 09:** Plotting with `ggplot2`
 
 - Plotting with `ggplot2`
 - [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo.Rmd), updated [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo_INCLASS.Rmd) with in class additions
 - [slides](R/2020-07-09_ggplot/2020-07-09_plotting_ggplot2.pdf)
 
 Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
+
+---
+
+#### **July 10:** How to Troubleshoot Code and How to Read a Scientific Paper
+
+- How to troubleshoot code
+- How to read a scientific paper
+- slides
+
+**Journal Club Assignment**
+
+- Assignment description is on the last slide in the slides above.
+- The Google Doc to sign up for papers and times is here <https://docs.google.com/spreadsheets/d/1TVXcyu1PKn4d_Wk2hEjOWLUxLkwE4U_xLLDlVM2k2CU/edit?usp=sharing>
+- [example slides](journal_club_assignment/example_journal_club_slides.pdf)
+- Example video <https://www.youtube.com/watch?v=xXKL9uLFHy4>
+- Papers
+  - [Cani 2018](journal_club_assignment/review_papers/cani2018_microbiome_review.pdf) Microbiome
+  - [Greenberg 2019](journal_club_assignment/review_papers/greenberg2019_methylation_review.pdf) Methylation
+  - [Kazazian 2017](journal_club_assignment/review_papers/kazazian2017_mobile_DNA_in_health_and_disease.pdf) Repetitive/Transposable Elements
+  - [Klemm 2019](journal_club_assignment/review_papers/klemm2019_chromatin_accessibility_review.pdf) Chromation Accessibility
+  - [Stark 2019](journal_club_assignment/review_papers/stark2019_RNAseq_review.pdf) RNA-seq
+  - [Tang 2019](journal_club_assignment/review_papers/tang2019_single_cell_review.pdf) Single Cell Sequencing
