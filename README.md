@@ -118,6 +118,6 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>
 
 - Plotting with `ggplot2`
 - [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo.Rmd), updated [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo_INCLASS.Rmd) with in class additions
-- [slides](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-09_plotting_ggplot2.pdf)
+- [slides](R/2020-07-09_ggplot/2020-07-09_plotting_ggplot2.pdf)
 
 Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
