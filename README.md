@@ -110,7 +110,8 @@ Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr
 - [demo Rmd](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_rmarkdown_and_dplyr_demo.Rmd)
 - [slides](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_intro_to_r.pdf)
 
-Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>
+Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft> 
+[ANSWER KEY](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_dplyr_assignment_ANSWERS.Rmd)
 
 ---
 
@@ -128,7 +129,7 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
 
 - How to troubleshoot code
 - How to read a scientific paper
-- slides
+- [slides](journal_club_assignment/2020-07-10_how_to_read_science_paper.pdf)
 
 **Journal Club Assignment**
 
