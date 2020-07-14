@@ -149,7 +149,7 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
 
 #### **July 14:** Reading Data with `readr` and Tidying Data with `tidyr`
 
-- [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-09_readr_tidyr_demo.Rmd)
-- slides
+- [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-09_readr_tidyr_demo.Rmd), updated [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-09_readr_tidyr_demo_INCLASS.Rmd) with in class additions
+- [slides](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr.pdf)
 
 Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/i3Ml_7B7>
