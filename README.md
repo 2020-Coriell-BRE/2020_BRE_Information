@@ -152,4 +152,4 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
 - [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-09_readr_tidyr_demo.Rmd), updated [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr_demo_INCLASS.Rmd) with in class additions
 - [slides](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr.pdf)
 
-Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/i3Ml_7B7>
+Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6syth>
