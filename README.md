@@ -153,3 +153,12 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
 - [slides](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr.pdf)
 
 Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6syth>
+
+---
+
+#### **July 14:** Clusterin
+
+- [demo Rmd](R/2020-07-15_clustering/2020-07-15_clustering_demo.Rmd)
+- slides
+
+Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>
