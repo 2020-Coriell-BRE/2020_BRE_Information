@@ -144,3 +144,12 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
   - [Klemm 2019](journal_club_assignment/review_papers/klemm2019_chromatin_accessibility_review.pdf) Chromation Accessibility
   - [Stark 2019](journal_club_assignment/review_papers/stark2019_RNAseq_review.pdf) RNA-seq
   - [Tang 2019](journal_club_assignment/review_papers/tang2019_single_cell_review.pdf) Single Cell Sequencing
+
+---
+
+#### **July 14:** Reading Data with `readr` and Tidying Data with `tidyr`
+
+- [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-09_readr_tidyr_demo.Rmd)
+- slides
+
+Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/i3Ml_7B7>
