@@ -156,9 +156,18 @@ Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6
 
 ---
 
-#### **July 14:** Clusterin
+#### **July 15:** Clustering
 
-- [demo Rmd](R/2020-07-15_clustering/2020-07-15_clustering_demo.Rmd)
+- [demo Rmd](R/2020-07-16_statistics_broom/2020-07-16_statistics_demo.Rmd)
 - [slides](R/2020-07-15_clustering/2020-07-15_clustering.pdf)
 
 Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>
+
+---
+
+#### **July 16:** Statistics
+
+- [demo Rmd](R/2020-07-16_statistics_broom/2020-07-16_statistics_demo.Rmd)
+- slides
+
+Today's Assignment: Statistics <https://classroom.github.com/a/4NWo-P_3>

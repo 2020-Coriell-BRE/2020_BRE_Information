@@ -1,0 +1,193 @@
+
+```{r setup, include=FALSE}
+# load libraries
+library(tidyverse)
+library(conflicted)
+
+# additional libraries for today
+library(viridis)
+library(magrittr)
+library(broom)
+
+# resolve package conflicts
+filter <- dplyr::filter
+select <- dplyr::select
+
+# configure knitr settings
+knitr::opts_chunk$set(echo = TRUE, fig.width = 6, fig.height = 4)
+```
+
+## 2020-07-16 Statistics in R 
+
+We've finally gotten to what R was meant for! Statistics!
+
+### t-test
+
+#### One sample t-ttest
+
+For testing the mean of some continuous data against a known mean.
+
+```{r}
+### significant result
+t.test(iris$Sepal.Length, mu = 10)
+
+### non-significant result
+t.test(iris$Sepal.Length, mu = 5.8)
+```
+
+Using `broom` functions to tidy up `t.test()`
+
+```{r}
+# tidy()
+# Gets the result of the test
+t.test(iris$Sepal.Length, mu = 5) %>% tidy()
+
+# glance()
+# Gets the model parameters; frequently some of the columns will be the same as
+# the ones you get with tidy(). With t.test() tidy() and glance() actually 
+# return exactly the same results.
+t.test(iris$Sepal.Length, mu = 5) %>% glance()
+
+# augment
+# Add information back to the original table. Does NOT work with all 
+# models/tests. More for when you're doing clustering like yesterday
+t.test(iris$Sepal.Length, mu = 5) %>% augment(iris) # not allowed for t.test(), but that's fine
+```
+
+#### Two sample t-test
+
+For testing the difference in means between two groups
+
+##### unpaired
+
+This is the standard t-test that you should use by default
+
+```{r}
+# How to pipe into t.test
+iris %>% 
+# filter out one species, because we can only test two groups
+  filter(Species != 'setosa') %>%
+# Syntax is numeric variable ~ grouping variable
+# Need to use . when piping; this tells t.test() that the table is being piped in
+  t.test(Sepal.Length ~ Species, data = .)
+
+### with tidy()
+iris %>% 
+  filter(Species != 'setosa') %>%
+  t.test(Sepal.Length ~ Species, data = .) %>%
+  tidy()
+```
+
+##### paired
+
+You can use a paired t-test when a natural pairing exists between the data, for example individuals before and after treatment with some drugs, student test scores at the beginning of the year vs the end of the year, tumor and normal tissue samples from the same individual. The built-in `sleep` dataset gives the extra sleep time for a group of individuals treated with two different drugs. The columns contain:
+
+- **extra** = numeric increase in hours of sleep
+- **group** = drug given
+- **ID** = patient ID
+
+Let's look at the sleep table first.
+
+```{r}
+sleep
+```
+
+To do a paired t-test, set the argument `paired = T`. Let's compare doing a paired and an unpaired t-test on the same data. A paired t-test will always give you a more significant result.
+
+```{r}
+t.test(extra ~ group, data = sleep, paired = F)
+t.test(extra ~ group, data = sleep, paired = T)
+```
+
+And how it looks tidied up again
+
+```{r}
+t.test(extra ~ group, data = sleep, paired = T) %>% tidy()
+```
+
+### chi-square
+
+```{r}
+mtcars
+```
+
+Do a chi-square test
+
+```{r}
+chisq.test(mtcars$carb, mtcars$cyl)
+```
+
+What does it look like using the `broom` functions?
+
+```{r}
+chisq.test(mtcars$carb, mtcars$cyl) %>% tidy()
+
+chisq.test(mtcars$carb, mtcars$cyl) %>% glance()
+
+chisq.test(mtcars$carb, mtcars$cyl) %>% augment()
+```
+
+
+### ANOVA
+
+Look at the data
+
+```{r}
+chickwts
+chickwts %>% distinct(feed)
+```
+
+Do the test
+
+```{r}
+aov(weight ~ feed, data = chickwts)
+```
+
+What does it look like with the different `broom` functions?
+
+```{r}
+aov(weight ~ feed, data = chickwts) %>% tidy()
+
+aov(weight ~ feed, data = chickwts) %>% glance()
+
+aov(weight ~ feed, data = chickwts) %>% augment()
+```
+
+#### Post-Hoc Tukey Test
+
+Tukey test explicitly compares all different functions
+
+```{r}
+aov(weight ~ feed, data = chickwts)
+aov(weight ~ feed, data = chickwts) %>% TukeyHSD()
+```
+
+What does it look like with the different `broom` functions?
+
+```{r}
+aov(weight ~ feed, data = chickwts) %>% TukeyHSD() %>% tidy()
+
+aov(weight ~ feed, data = chickwts) %>% TukeyHSD() %>% glance()
+
+aov(weight ~ feed, data = chickwts) %>% TukeyHSD() %>% augment()
+```
+
+### Linear Model
+
+Do the test
+
+```{r}
+lm(Sepal.Length ~ Sepal.Width, data = iris)
+```
+
+What does it look like with the different `broom` functions?
+
+```{r}
+lm(Sepal.Length ~ Sepal.Width, data = iris) %>% tidy()
+
+lm(Sepal.Length ~ Sepal.Width, data = iris) %>% glance()
+
+lm(Sepal.Length ~ Sepal.Width, data = iris) %>% augment()
+```
+
+
