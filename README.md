@@ -158,7 +158,7 @@ Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6
 
 #### **July 15:** Clustering
 
-- [demo Rmd](R/2020-07-16_statistics_broom/2020-07-16_statistics_demo.Rmd)
+- [demo Rmd](R/2020-07-15_clustering/2020-07-15_clustering_demo.Rmd)
 - [slides](R/2020-07-15_clustering/2020-07-15_clustering.pdf)
 
 Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>
@@ -168,6 +168,17 @@ Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>
 #### **July 16:** Statistics
 
 - [demo Rmd](R/2020-07-16_statistics_broom/2020-07-16_statistics_demo.Rmd)
-- slides
+- [slides](R/2020-07-16_statistics_broom/2020-07-16_statistics_review.pdf)
 
 Today's Assignment: Statistics <https://classroom.github.com/a/4NWo-P_3>
+
+---
+
+#### **July 17:** Grab Bag and Exploratory Data Analysis
+
+- mini heatmap [demo Rmd](R/2020-07-17_exploratory_data_analysis/pheatmap_annotations.Rmd)
+  - And the [data](R/2020-07-17_exploratory_data_analysis/colon.csv) for it
+- slides
+
+Today's Assignment: Exploratory Data Analysis <https://classroom.github.com/a/sUlgFd-I>  
+Because this is a more involved assignment, it's due **Friday 7/24**

@@ -1,0 +1,82 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(conflicted)
+
+library(pheatmap)
+
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## `pheatmap` Annotations
+
+More detail about heatmap annotations because there were a lot of questions
+
+---
+
+Get the data and drop NAs
+
+```{r}
+read_csv('colon.csv') %>%
+  na.omit() -> colon
+```
+
+Wrangle the data for a heatmap
+
+- drop the categorical columns
+- convert the sample IDs or some unique identifier for each row to `rownames`; this isn't 100% necessary, but *if you want to annotate the rows* you need to do this
+
+```{r}
+colon %>% 
+  select(-id, -rx, -study) %>% 
+  as.data.frame() %>%
+### need to have rownames (and column names) because that's how pheatmap 
+### connects the heatmap table and the annotation table
+  column_to_rownames('X1') -> colon_num
+```
+
+Plot a heatmap. We can see clustering based on the trees, but we might want to look at some metadata to see if it's overrepresented in some cluster, similar to coloring the points on a PCA plot. That's where annotations come in
+
+```{r}
+pheatmap(colon_num, show_rownames = F, scale = 'column')
+```
+
+To set up an annotation, you need to set up *a separate annotation table*. The *rownames* in the annotation table need to be the same as the *rownames* in the heatmap table (or if you want to annotate the columns, the *rownames* in your annotation table need to match the *colnames* in the heatmap table)
+
+```{r}
+colon %>%
+# select the column you used to make the rownames in the heatmap table and any
+# columns you want to add as annotations on the heatmap
+  select(X1, rx) %>%
+  as.data.frame() %>%
+# convert the same column you used to make the rownames for the heatmap table
+# to the rownames for the annotation table
+  column_to_rownames('X1') -> row_anno
+
+# same heatmap code, but with the annotation table added
+pheatmap(colon_num, show_rownames = F, scale = 'column', annotation_row = row_anno)
+```
+
+You can also add multiple annotations onto the heatmap, although practically speaking more than 2-3 is unreadable
+
+```{r}
+colon %>%
+# to plot multiple annotations keep multiple columns around
+# you can also annotate by continuous variables like age
+  select(X1, rx, sex, age) %>%
+  mutate(sex = ifelse(sex == 0, 'F', 'M')) %>%
+  as.data.frame() %>%
+  column_to_rownames('X1') -> row_anno2
+
+pheatmap(colon_num, show_rownames = F, scale = 'column', annotation_row = row_anno2)
+```
+
+
+
+
+
