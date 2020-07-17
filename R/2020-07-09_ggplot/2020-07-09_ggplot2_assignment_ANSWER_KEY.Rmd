@@ -1,0 +1,348 @@
+
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(conflicted)
+
+# resolve conflicts
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 2020-07-0p: Plotting with `ggplot2`
+
+We'll be using data from the `gapminder` package for today's assignment. The `gapminder` dataset has the following columns (if the name defines the column I didn't put a longer description): 
+
+- `country`
+- `continent` 
+- `year` 
+- `ifeExp` = the life expectancy of the population in years
+- `pop` = the population of the country
+- `gdpPercap` = gross domestic product (GDP) per capita in inflation-adjusted US dollars 
+
+You need to install and load a package to get the data, so make sure you pay attention to the set up steps and run every chunk. 
+
+### Set Up
+
+Install the package with the data
+
+```{r}
+# install.packages("gapminder")
+```
+
+Load the library.
+
+```{r}
+library(gapminder)
+```
+
+Look at the data. 
+
+```{r}
+gapminder
+```
+
+<br>
+
+### Play with the Fixed Aesthetics
+
+We're going to play around with the fixed aesthetics of the same plot
+
+---
+
+1. Change the transparency of the points
+
+```{r}
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F)
+
+### possible answer
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent), alpha = 0.25) +
+  geom_smooth(se = F)
+```
+
+2. Make the points and/or the line a different color! A pdf of R color names is available at the link <http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
+
+```{r}
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F)
+
+### possible answer
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  scale_color_viridis_d() +
+  geom_smooth(se = F, color = 'firebrick3')
+```
+
+3. You don't have to have just a boring straight lines or normal circles! Change the line to a different type. Options at the link: <http://sape.inf.usi.ch/quick-reference/ggplot2/linetype>. Change the points to something other than circles too. <https://ggplot2.tidyverse.org/articles/ggplot2-specs_files/figure-html/unnamed-chunk-8-1.png>
+
+```{r}
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F)
+
+### possible answer
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent), shape = 'asterisk') +
+  geom_smooth(se = F, linetype = 'dotdash')
+```
+
+4. Change the size of something on the plot! The `size` argument accepts numeric values.
+
+```{r}
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F)
+
+### possible answer
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent), size = 0.5) +
+  geom_smooth(se = F, size = 4)
+```
+
+5. Change the theme of the plot to something else. Options at the link: <https://ggplot2.tidyverse.org/reference/ggtheme.html>
+
+```{r}
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F)
+
+### possible answer
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F) +
+  theme_minimal()
+```
+
+6. Facet the plot by some feature
+
+```{r}
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F)
+
+### possible answer
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F) +
+  facet_wrap(~ continent)
+```
+
+7. Change the x- and y- axis labels of the plot to something better
+
+```{r}
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F)
+
+### possible answer
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent)) +
+  geom_smooth(se = F) +
+  labs(x = 'GDP per capita (US $, inflation-adjusted)',
+       y = 'Life Expectancy (Years)')
+```
+
+### Same Data, Different Shapes, Different Geometry
+
+This section will explore how you can plot data with different geometries
+
+---
+
+For questions 8 and 9, plot the gapminder dataset with `x = continent` and `y = lifeExp`. Use any geom you would like.
+
+8. `x = continent` and `y = lifeExp` Plot 1
+
+```{r}
+ggplot(gapminder, aes(x = continent, y = lifeExp)) +
+  # geom of your choice goes here
+
+### possible answers (for questions 6 and 7)
+ggplot(gapminder, aes(x = continent, y = lifeExp)) +
+  geom_boxplot()
+### OR
+ggplot(gapminder, aes(x = continent, y = lifeExp)) +
+  geom_violin()
+```
+
+9. `x = continent` and `y = lifeExp` Plot 2
+
+```{r}
+ggplot(gapminder, aes(x = continent, y = lifeExp)) +
+  # geom of your choice goes here
+```
+
+---
+
+For questions 10-12, pick one variable and plot it using a geom of your choice
+
+10. Pick one variable and plot it
+
+```{r}
+### possible answers (for questions 8-10)
+ggplot(gapminder, aes(x = country)) +
+  geom_bar()
+# OR
+ggplot(gapminder, aes(x = continent)) +
+  geom_bar()
+# OR
+ggplot(gapminder, aes(x = year)) +
+  geom_histogram()
+# OR
+ggplot(gapminder, aes(x = lifeExp)) +
+  geom_density()
+# OR 
+ggplot(gapminder, aes(x = pop)) +
+  geom_histogram()
+# OR 
+ggplot(gapminder, aes(x = gdpPercap)) +
+  geom_density()
+```
+
+11. Pick one variable and plot it
+
+```{r}
+
+```
+
+12. Pick one variable and plot it
+
+```{r}
+
+```
+
+<br>
+
+### Answer Question With Plots
+
+For this section, make an appropriate plot to answer the question.
+
+---
+
+13. What is the trend in life expectancy over time? Is it increasing or decreasing?
+
+```{r}
+ggplot(gapminder, aes(x = year, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = F)
+```
+
+14. As life expectancy changes, what happens to GDP per capita?
+
+```{r}
+ggplot(gapminder, aes(x = lifeExp, y = gdpPercap)) +
+  geom_point()
+```
+
+15. Does the relationship between life expectancy and GDP per capita look the same for all continents?
+
+```{r}
+ggplot(gapminder, aes(x = lifeExp, y = gdpPercap)) +
+  geom_point(aes(color = continent)) +
+  facet_wrap(~ continent)
+```
+
+16. Is the distribution of life expectancy the same over all the continents?
+
+```{r}
+ggplot(gapminder, aes(x = lifeExp, fill = continent)) +
+  geom_density(alpha = 0.4)
+```
+
+17. Is the relationship between life expectancy and GDP per capita the same in the first year in the `gapminder` dataset vs the last year?
+
+```{r}
+gapminder %>%
+  filter(year == min(year) | year == max(year)) %>%
+
+ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  facet_wrap(~ year)
+```
+
+18. Which country in Oceania had the greatest increase in life expectancy over time?
+
+```{r}
+gapminder %>% 
+  filter(continent == 'Oceania') %>%
+
+ggplot(aes(x = year, y = lifeExp, color = country)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = F)
+```
+
+19. What's the difference in population between the countries of Oceania in the 21st century?
+
+```{r}
+gapminder %>% 
+  filter(year > 2000, continent == 'Oceania') %>%
+
+ggplot(aes(x = year, y = pop, fill = country)) +
+  geom_col(position = 'dodge')
+```
+
+20. For countries starting with 'B', how has their GDP per capita changed over time?
+
+```{r}
+gapminder %>% 
+  filter(str_detect(country, '^B')) %>%
+
+ggplot(aes(x = year, y = gdpPercap, color = country)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = F)
+```
+
+
+
+<br><br>
+
+

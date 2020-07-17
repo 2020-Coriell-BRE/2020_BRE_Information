@@ -110,7 +110,7 @@ Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr
 - [demo Rmd](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_rmarkdown_and_dplyr_demo.Rmd)
 - [slides](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_intro_to_r.pdf)
 
-Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft> 
+Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>  
 [ANSWER KEY](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_dplyr_assignment_ANSWERS.Rmd)
 
 ---
@@ -121,7 +121,8 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>
 - [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo.Rmd), updated [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo_INCLASS.Rmd) with in class additions
 - [slides](R/2020-07-09_ggplot/2020-07-09_plotting_ggplot2.pdf)
 
-Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
+Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>  
+[ANSWER KEY](R/2020-07-09_ggplot/2020-07-09_ggplot2_assignment_ANSWER_KEY.Rmd)
 
 ---
 
@@ -152,7 +153,8 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
 - [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-09_readr_tidyr_demo.Rmd), updated [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr_demo_INCLASS.Rmd) with in class additions
 - [slides](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr.pdf)
 
-Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6syth>
+Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6syth>  
+[ANSWER KEY](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr_assignment_ANSWERKEY.Rmd)
 
 ---
 
@@ -161,7 +163,8 @@ Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6
 - [demo Rmd](R/2020-07-15_clustering/2020-07-15_clustering_demo.Rmd)
 - [slides](R/2020-07-15_clustering/2020-07-15_clustering.pdf)
 
-Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>
+Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>  
+[ANSWER KEY](R/2020-07-15_clustering/2020-07-15_clustering_assignment_ANSWERKEY.Rmd )
 
 ---
 
@@ -178,7 +181,11 @@ Today's Assignment: Statistics <https://classroom.github.com/a/4NWo-P_3>
 
 - mini heatmap [demo Rmd](R/2020-07-17_exploratory_data_analysis/pheatmap_annotations.Rmd)
   - And the [data](R/2020-07-17_exploratory_data_analysis/colon.csv) for it
-- slides
+- [slides](R/2020-07-17_exploratory_data_analysis/2020-07-16_grabbag_exploratory_data_analysis.pdf)
 
 Today's Assignment: Exploratory Data Analysis <https://classroom.github.com/a/sUlgFd-I>  
 Because this is a more involved assignment, it's due **Friday 7/24**
+
+- [assignment instructions](R/2020-07-17_exploratory_data_analysis/exploratory_data_analysis_assignment.pdf)
+- [assignment template Rmd](R/2020-07-17_exploratory_data_analysis/exploratory_data_analysis_template.Rmd)
+- [example assignment](R/2020-07-17_exploratory_data_analysis/example_exploratory_data_analysis.Rmd)

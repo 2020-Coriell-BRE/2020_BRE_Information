@@ -1,0 +1,64 @@
+---
+output: html_document
+---
+
+```{r global_options, include = FALSE}
+#### Load any necessary libraries here. I've already loaded the basics
+library(tidyverse)
+library(conflicted)
+
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE, fig.align ="center", 
+                      fig.height = 4.5, fig.width = 4.5)
+```
+
+## Exploratory Data Analysis
+
+## Introduction
+
+Here's where you'll explain your data. Where is it from and what's a little bit of the background. Then you need to explain the columns (variables) in the dataset:
+  
+- **column1:** description
+- **column2:** description
+- **column3:** description
+- etc.
+
+<br><br>
+
+## Data Preparation
+
+Describe here what you did to clean the data.
+
+```{r}
+### Use this chunk to read in the data and clean it
+```
+
+<br><br>
+
+## Questions
+
+For each question, make a plot illustrating the question, use a statistical to answer the question, and describe your conclusions.
+
+#### Question #: WRITE YOUR QUESTION HERE
+
+DESCRIBE YOUR RESULTS HERE
+
+```{r}
+### use this chunk to make a plot illustrating your question
+```
+
+```{r}
+### use this chunk to conduct a statistical test to answer your question
+```
+
+**Rinse and repeat for another 9 questions**
+
+## References
+1. Reference should be for your dataset(s), but if you looked up more information that you included in the introduction, please reference it here as well.
+
+
+
+<br>
+
+

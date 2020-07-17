@@ -1,0 +1,404 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(conflicted)
+library(vroom)
+
+### resolve conflicts
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## `readr` and `tidyr`
+
+### Basics of tidying using `tidyr` with the `who` data
+
+We'll use the dataset `who` for a tidying challenge this week! It's in the tidyr package for practice and gives World Health Organization data on tuberculosis (TB) cases. The following chunks guide you through the process of tidying a data table. So for each question, you'll need to either copy/paste the previous chunk into the next chunk to continue piping (preferred method) or assign the result to an object and use that objec in the next chunk. 
+
+#### The Data
+
+Before doing anything else, take a look at the `who` table. What do you see that's not tidy? Try and list them yourself before looking at the answers below.
+
+```{r}
+who
+```
+
+Some reasons the table isn't tidy/feature of the table you should pay attention to are:
+
+- The columns country, iso2, and iso3 look like they all specify the country, so they're redundant, but the columns are all single variables, which is tidy.
+- The year column is also a variable, so this column is tidy!
+- The columns new_sp_m014 to newrel_f65 look like they're values, not variables, because they have a repeated structure. They also look like they contain multiple values withing them that will need to be separated out later.
+- There are a ton of NAs that will need to be either dropped or replaced.
+
+#### Drop columns
+
+First, take care of the easiest tidying step and drop the redundant iso2 and iso3 columns.
+
+```{r}
+who %>%
+  select(-iso2, -iso3)
+```
+
+#### Gather columns
+
+We decided earlier that the columns new_sp_m014 to newrel_f65 are values of the same variable(s) so use `pivot_longer()` to gather them together into two columns. Name your two new columns "code" and "count" (or whatever you want to call the new columns, but they'll be referred to as code and count downstream)
+
+```{r}
+who %>%
+  select(-iso2, -iso3) %>%
+  pivot_longer(new_sp_m014:newrel_f65, names_to = 'code', values_to = 'count')
+```
+
+So what does the text in the code column mean? Thankfully, because this is a built-in dataset, you can find out by typing `?who` into the console. But what about in real life? Well you might have to talk to whoever generated the data, or find the data dictionary or read the documentation for a tool that generated a table or figure it out yourself or some combination of all of these. 
+
+But here's what our data in the code column means:
+
+1. The first three letters tell you whether the case of tuberculosis was a new or old case of TB.
+2. The letters in between underscores give diagnostic information about the TB case.
+3. The letter immediately after the second underscore gives the sex of the patient
+4. The numbers at the end give the age group of the patient.
+
+#### Separate columns
+
+##### Separate
+
+So we're going to need to split this column into four columns. First, separate the code column by underscores, ('_') into three new columns, "case_type", "diag_type", and "sexage."
+
+```{r}
+who %>%
+  select(-iso2, -iso3) %>%
+  pivot_longer(new_sp_m014:newrel_f65, names_to = 'code', values_to = 'count') %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_', convert = T)
+```
+
+##### Check results
+
+You should have gotten a warning about missing pieces. That probably means that not all the stuff in the code column you just split up had the same format. The easiest way to check the new columns is by identifying the distinct entries in them. 
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  distinct(case_type)
+```
+
+When you run the code in the chunk above, you can see that you didn't just get 'new' or 'old' in the case_type column, you got 'new' or 'newrel'. One section of text in the code column must not have had two underscores, so we'll need to go back redo our separate eventually. But before we do that, use the next two chunks to check the "diag_type" and "sexage" columns.
+
+Check "diag_type" column in this chunk.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  distinct(diag_type)
+```
+
+And check the "sexage" column in this chunk.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  distinct(sexage)
+```
+
+You should have seen a mix of values belonging to the different variables in the diag_type and sexage columns. This is because code wasn't split properly. If we go back and split code correctly, that should fix the problem. 
+##### Fix the problem
+
+Because the missing underscore problem is complicated and hasn't been covered so far, use this mutate command `mutate(code = stringr::str_replace(code, 'newrel', 'new_rel'))` **BEFORE** you `separate()` to fix the problem in the chunk below.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_')
+```
+
+##### Check results
+
+You shouldn't have gotten any errors this time, but just to make sure, in the three chunks below, check the case_type, diag_type, and sexage columns again using the same `group_by()` and `count()` method.
+
+Check the case_type column here.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  distinct(case_type)
+```
+
+Check the diag_type column here.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  distinct(diag_type)
+```
+
+Check the sexage column here.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  distinct(sexage)
+```
+
+##### Drop column
+
+All the columns should look good now! Their values all belong to the variable indicated in the column name. However, the case_type column only has 'new' in it. That makes this columnn unnecessary, so drop the case_type column in the chunk below.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  select(-case_type)
+```
+
+##### Separate column again
+
+The sexage column is still a problem because it has two variables in it, sex and age. Use the chunk below to split the sexage column into two columns, "sex" and "age."
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  select(-case_type) %>%
+  separate(sexage, into = c('sex', 'age'), sep = 1)
+```
+
+##### Check results
+
+The new sex and age columns should *theoretically* be ok, because we looked at the sexage column before splitting and know that everything was in the same format, but just to be sure, check that the values in the sex and age columns are correct using the `group_by()` and `count()` method.
+
+Check the sex column here.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  select(-case_type) %>%
+  separate(sexage, into = c('sex', 'age'), sep = 1) %>%
+  distinct(sex)
+```
+
+Check the age column here.
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  select(-case_type) %>%
+  separate(sexage, into = c('sex', 'age'), sep = 1) %>%
+  distinct(age)
+```
+
+They should both look good!
+
+#### Fix NAs
+
+One last problem - all those NAs in the count column! They need to be dealt with in some way. Try both methods, just dropping NAs, and replacing NAs with some reasonable value
+
+Use this chunk to practice dropping NAs
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  select(-case_type) %>%
+  separate(sexage, into = c('sex', 'age'), sep = 1) %>%
+  na.omit()
+```
+
+Use this chunk to replace NAs with something
+
+```{r}
+who %>% 
+  select(-iso2, -iso3) %>%
+  gather(code, count, `new_sp_m014`:`newrel_f65`) %>% 
+  mutate(code = stringr::str_replace(code, 'newrel', 'new_rel')) %>%
+  separate(code, into = c('case_type', 'diag_type', 'sexage'), sep = '_') %>%
+  select(-case_type) %>%
+  separate(sexage, into = c('sex', 'age'), sep = 1) %>%
+  replace_na(list(count = 0)) -> who_tidy
+```
+
+The dataset should now be tidy! Make sure to save the table with the replaced NAs to a new object since you'll use the tidied `who` table in the next section.
+
+<br>
+
+### Combine the tidied `who` dataset with more data
+
+Read in the table `TTB_hiv_nonroutine_surveillance_2020-07-10.csv` and combine it with the `who` table. The data dictionary is available in the `data/` folder if you need an explanation of the column names.
+
+---
+
+Read in the  HIV surveillance table.
+
+```{r}
+read_csv('data/TB_hiv_nonroutine_surveillance_2020-07-10.csv') -> hiv
+```
+
+Combine it with the tidied who table.
+
+```{r}
+left_join(who_tidy, hiv)
+```
+
+<br>
+
+## Combining Skills: Answer Questions About Data
+
+Read in the `measles` data set at the link and answer the following questions.
+
+```{r}
+### read the data in here
+read_csv("https://raw.githubusercontent.com/WSJ/measles-data/master/all-measles-rates.csv") %>%
+  select(-index) -> measles
+```
+
+---
+
+1. Which state has the lowest average percentage of MMR vaccinations?
+
+```{r}
+### using numbers
+measles %>% 
+  filter(mmr >= 0) %>%
+  group_by(state) %>%
+  summarize(avg_mmr = mean(mmr)) %>%
+  ungroup() %>%
+  arrange(avg_mmr)
+
+### visually
+measles %>% 
+  filter(mmr >= 0) %>%
+  group_by(state) %>%
+  summarize(avg_mmr = mean(mmr)) %>%
+  ungroup() %>%
+  arrange(desc(avg_mmr)) %>%
+  mutate(state = factor(state, state)) %>%
+
+ggplot(aes(x = state, y = avg_mmr)) +
+  geom_col(aes(fill = avg_mmr), color = 'gray20') +
+  scale_fill_gradient(high = 'dodgerblue4', low = 'firebrick3') +
+  labs(x = 'US State', 
+       y = 'Average Measles, Mumps, and Rubella (MMR)\nVaccination Rate') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 30))
+```
+
+2. What's the average percentage of students exempted from vaccination for each of California's counties?
+
+```{r}
+### using numbers
+measles %>%
+  filter(state == 'California') %>%
+  filter(overall >= 0) %>%
+  mutate(total_exempt = 100 - overall) %>% 
+  group_by(county) %>%
+  summarize(avg_exempt = mean(total_exempt)) %>%
+  ungroup() %>%
+  arrange(desc(avg_exempt))
+
+### visually
+measles %>%
+  filter(state == 'California') %>%
+  filter(overall >= 0) %>%
+  mutate(total_exempt = 100 - overall) %>% 
+  group_by(county) %>%
+  summarize(avg_exempt = mean(total_exempt)) %>%
+  ungroup() %>%
+  arrange(desc(avg_exempt)) %>%
+  mutate(county = factor(county, county)) %>%
+
+ggplot(aes(x = county, y = avg_exempt)) +
+  geom_point() +
+  labs(x = 'California County', 
+       y = 'Total Percentage of Students Exempt\nfrom Vaccination Requirements') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 30, size = 6))
+```
+
+3. What's the year to year change in average vaccination rates?
+
+```{r}
+# using numbers
+measles %>%
+  mutate(year = ifelse(year == '2017', '2017-18', year)) %>%
+  filter(year != 'null', overall >= 0) %>% 
+  group_by(year) %>%
+  summarize(avg_vac = mean(overall))
+
+# visually
+measles %>%
+  mutate(year = ifelse(year == '2017', '2017-18', year)) %>%
+  filter(year != 'null', overall >= 0) %>% 
+  # group_by(year) %>%
+  # summarize(avg_vac = mean(overall)) %>%
+
+ggplot(aes(x = year, y = overall)) +
+  geom_boxplot() +
+  labs(x = 'School Year', y = 'Percent of Students Vaccinated') +
+  theme_classic()
+```
+
+4. What's the difference in distribution between the three reasons for exemption from vaccination?
+
+```{r}
+measles %>%
+  pivot_longer(xrel:xper, 
+               names_to = 'exempt_reason', values_to = 'exempt_percent') %>%
+
+ggplot(aes(x = exempt_percent, fill = exempt_reason)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(labels = c('medical', 'personal', 'religious'),
+                    values = c('deepskyblue3', 'forestgreen', 'gold3'),
+                    name = 'Reason for Exemption') +
+  labs(x = 'Percentage of Students Exempted from Vaccination') +
+  coord_cartesian(xlim = c(0, 20)) +
+  theme_classic()
+```
+
+5. What's the breakdown of average student enrollment by type of school per state?
+
+```{r}
+measles %>% #filter(enroll > 100)
+  mutate(enroll = ifelse(enroll >= 100, 100, enroll)) %>%
+  select(state, type, enroll) %>% 
+  na.omit() %>%
+  group_by(state, type) %>%
+  summarize(avg_enroll = mean(enroll)) %>%
+  ungroup()
+```
+
+
+
+<br><br>
+
+

@@ -1,0 +1,85 @@
+---
+output: html_document
+---
+
+```{r global_options, include = FALSE}
+#### Load any necessary libraries here.
+library(tidyverse)
+library(conflicted)
+library(broom)
+
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE, fig.align ="center", 
+                      fig.height = 4.5, fig.width = 4.5)
+```
+
+## Exploratory Data Analysis
+
+## Introduction
+
+  This project will use the colon survival dataset, which is one of the datasets that was originally distributed with R. The data are from a 1990 trial of adjuvant chemotherapy for colon cancer. Levamisole is a low-toxicity compound that was tested on its own and in combination with moderately toxic compound fluorouracil (5-FU) (Araujo).
+  
+  + `X` (numeric) unique id for each row
+  + `id` (numeric) Unique id for each patient, although each patient has two records, one for reoccurrence and one for death
+  + `study` (binary) 1 for all patients in dataset as they are in the study, 0 would indicate a control but there are none in this data set
+  + `rx` (categorical) treatment given, either levamisole (Lev), levamisole plus 5-FU (Lev+5FU), or just observation (Obs)
+  + `sex` (binary) 1 for male, 0 for female
+  + `age` (numeric) age in years of patient
+  + `obstruct` (binary) indicates whether the colon was obstructed by the tumor, 0 for no, 1 for yes
+  + `perfor` (binary) indicates whether the colon was perforated by the tumor, 0 for no, 1 for yes
+  + `adhere` (binary) indicates whether the tumor had adhered to nearby organs, 0 for no, 1 for yes
+  + `nodes` (numeric) the number of lymph nodes with detectable cancer
+  + `status` (binary) censor status, patients who died without a reocurrence of colon cancer were censored to avoid biasing time to reoccurrence analyses, 0 for no censor, 1 for censor
+  + `differ` (categorical) differentiation of tumor, 1 for well, 2 for good, 3 for poor
+  + `extent` (categorical) extent of local spread of tumor, 1 for submucosa, 2 for muscle, 3 for serosa, 4 for contiguous structures
+  + `surg` (binary) time from tumor surgery to enrollment in study, 0 for short, 1 for long
+  + `node4` (binary) more than four positive lymph nodes, 0 for no, 1 for yes
+  + `time` (numeric) time in days to either reoccurrence or death
+  + `etype` (binary) 1 for reoccurrence, 2 for death
+
+<br><br>
+
+## Data Preparation
+
+Data is already tidy, but some filtering will be useful for the whole project. The study column is identical for everyone, so it can't be used for testing or prediction, so I'm removing it. I'm also removing censored individuals to not bias results, then removing the status column as it will no longer be necessary, and filtering out NAs.
+
+```{r}
+read.csv("colon.csv") %>% 
+  select(-study) %>% 
+  filter(status == 0) %>% 
+  select(-status) %>% 
+  na.omit() -> colon
+```
+
+<br><br>
+
+## Questions
+
+#### Example Question: Can age be used to predict survival time? 
+
+Age is statistically significantly associated with time to adverse event. For every 1 year increase in age, time to adverse event descreases by ~3 days. While it's certainly not the only factor to affect time to adverse event, it seems that being older does make an adverse event more likely.
+
+```{r}
+ggplot(colon, aes(x = age, y = time)) + 
+  geom_point(aes(color = rx)) + 
+  scale_color_viridis_d() +
+  geom_smooth(method = "lm", se = F, color = 'firebrick3') + 
+  labs(x = 'Age (years)', y = 'Time to Event (days)') +
+  theme_classic(base_size = 20)
+```
+
+```{r}
+colon %>% 
+  lm(time ~ age, data = .) %>%
+  tidy()
+```
+
+## References
+1. Araujo, Artur. coloTP: Chemotherapy For Stage B/C Colon Cancer. Documentation reproduced from package TPmsm, version 1.2.1, License: GPL (>= 2). https://www.rdocumentation.org/packages/TPmsm/versions/1.2.1/topics/colonTP
+
+
+
+<br>
+
+
