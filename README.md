@@ -32,7 +32,7 @@ The Bioinformatics Research Experience is a four-week research training program 
 3. Download and install WinSCP <https://winscp.net/eng/index.php>. This will let you transfer files to and from your computer and the server.
 4. Install Git <https://git-scm.com/download/win>
 
--
+---
 
 ### Schedule
 
@@ -189,3 +189,14 @@ Because this is a more involved assignment, it's due **Friday 7/24**
 - [assignment instructions](R/2020-07-17_exploratory_data_analysis/exploratory_data_analysis_assignment.pdf)
 - [assignment template Rmd](R/2020-07-17_exploratory_data_analysis/exploratory_data_analysis_template.Rmd)
 - [example assignment](R/2020-07-17_exploratory_data_analysis/example_exploratory_data_analysis.Rmd)
+
+---
+
+#### **July 21** Command-Line Server Navigation
+
+- Getting Started with the Server [pdf](RNA-seq/2020-07-21_how_to_use_a_linux_server/get_connected_to_server.pdf)
+- slides
+
+Today's Assignment: Practice Server Commands Playing Terminus <https://classroom.github.com/a/sIUEXjYO>
+
+- Terminus <https://web.mit.edu/mprat/Public/web/Terminus/Web/main.html>
