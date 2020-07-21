@@ -1,0 +1,183 @@
+---
+output: html_document
+---
+
+```{r setup, include = FALSE}
+# load libraries
+library(tidyverse)
+library(conflicted)
+
+# additional libraries for today
+library(viridis)
+library(magrittr)
+library(broom)
+
+# resolve package conflicts
+filter <- dplyr::filter
+select <- dplyr::select
+
+# configure knitr settings
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 2020-07-08: Data Manipulation with `dplyr`
+
+### Practice Statistical Tests
+
+For this section, use the given statistical test to answer the question. Put the code for the statistical test in the chunk below the question and explain whether the test is positive (p-values < 0.05 are our significance threshold) or not where it says *TYPE YOUR CONCLUSION HERE*. We'll be using the built-in dataset `mtcars` for this section. Remember you can always check the built-in documentation by typing `?mtcars` in the R console
+
+---
+
+1. Using the built-in `mtcars` dataset, if you have a particular engine shape (`vs`) do you have an equal chance of having either type of transmission (`am`)? Use a chi-square test.
+
+*TYPE YOUR CONCLUSION HERE* There's no association between engine shape and transmission
+
+```{r}
+chisq.test(mtcars$vs, mtcars$am)
+```
+
+2. Using the built-in `mtcars` dataset, is there an association between the number of gears (`gear`) a car has and it's fuel efficiency (`mpg`)? Test the question using an ANOVA.
+
+*TYPE YOUR CONCLUSION HERE* There's a statistical difference for fuel efficieny between 3 gears and 4 or 5 gears, but no significant difference between 5 and 4 gears.
+
+```{r}
+aov(mpg ~ as.factor(gear), data = mtcars) %>% TukeyHSD() %>% tidy()
+```
+
+3. The average 18 wheeler truck has a horsepower of 400 (fact courtesy of dubious Googling). Compare this number to the data for personal vehicles in `mtcars`. Is their horsepower different from the mean 400 hp of an 18 wheeler? Use a t-test to answer the question.
+
+*TYPE YOUR CONCLUSION HERE* Yes, the horsepower of personal vehicles is statistically significantly different from commercial long range trucks that haul thousands of pounds of goods
+
+```{r}
+t.test(mtcars$hp, mu = 400) %>% tidy()
+```
+
+4. Is there a difference in horsepower (`hp`) between cars with automatic vs manual transmissions (`am`)? Test the question using a t-test.
+
+*TYPE YOUR CONCLUSION HERE* There's no statistically significant association between horsepower and transmission type.
+
+```{r}
+mtcars %$% t.test(hp ~ am) %>% tidy()
+```
+
+5. Using the built-in `mtcars` dataset, is there an association between the number of carburetors (`carb`) a car has and it's fuel efficiency (`mpg`)? Test the question using a linear model. Make sure to include the direction of the association in your answer.
+
+*TYPE YOUR CONCLUSION HERE* There is a statistically significant association between the number of carburetors and fuel efficiency. As the number of carburetors increases, fuel efficiency decreases.
+
+```{r}
+lm(mpg ~ carb, data = mtcars) %>% tidy()
+```
+
+### Pick the Appropriate Statistical Test
+
+In this section, you'll have to pick the appropriate statistical test to answer the question and then give your conclusion. Again, our significance level will be p < 0.05. We'll use the `wine` dataset again for this section. Use the chunk below to read it in. For reference, here is the column information again:
+
+- **Sample** = the unique sample ID for each row
+- **Cultivar** = the number factor indicating the grape cultivar the wine was made from
+- **Alcohol** = the alcohol concentration in the wine sample (g/L)
+- **MalicAcid** = the malic acid concentration in the wine sample (g/L)
+- **Ash** = the ash concentration in the wine sample (g/L)
+- **Magnesium** = the magnesium concentration in the wine sample (g/L)
+- **TotalPhenol** = the total amount of all phenol compounds in the wine sample (g/L)
+- **Flavanoids** = the concentration of all flavanoids in the wine sample (g/L)
+- **NonflavPhenols** = the concentration of all non-flavanoid phenols in the wine sample (g/L)
+- **Color** = wine color (spectrophotometric measure?)
+
+```{r}
+read_tsv('data/wine.tsv') -> wine
+```
+
+---
+
+6. Is there an association between malic acid and flavanoid content?
+
+*TYPE YOUR CONCLUSION HERE* There's a significant association between malic acid and flavanoid content. For every 1 g/L increase in malic acid concentraion, flavanoid content decreases by -0.45 g/L.
+
+```{r}
+lm(MalicAcid ~ Flavanoids, data = wine) %>% tidy()
+```
+
+7. Is there a difference in color between cultivars 1 and 2?
+
+*TYPE YOUR CONCLUSION HERE* Yep, there's a statistically significant difference in their colors
+
+```{r}
+wine %>%
+  filter(Cultivar != 3) %>%
+  mutate(Cultivar = as.character(Cultivar)) %$% 
+  t.test(Color ~ Cultivar) %>%
+  tidy()
+```
+
+8. Is there a difference in magnesium content between the three different cultivars?
+
+*TYPE YOUR CONCLUSION HERE* There are significant differences between cultivar 1 and the other two, but no significant difference between cultivars 2 and 3.
+
+```{r}
+aov(Magnesium ~ as.factor(Cultivar), data = wine) %>% TukeyHSD() %>% tidy()
+```
+
+9. Is there a difference in the average color of cultivar 3 compared the mean color of cultivar 1, 5.5?
+
+*TYPE YOUR CONCLUSION HERE* Yep, like between cultivars 1 and 2 from question 7, there's a significant difference between the mean color of cultivar 1 and 3.
+
+```{r}
+wine %>% 
+  filter(Cultivar == 3) %$% 
+  t.test(Color, mu = 5.5) %>%
+  tidy()
+```
+
+10. Is there a difference in ash content between the three cultivars?
+
+*TYPE YOUR CONCLUSION HERE*
+
+```{r}
+aov(Ash ~ as.factor(Cultivar), data = wine) %>% TukeyHSD() %>% tidy()
+```
+
+### Mini Exploratory Data Analysis
+
+In this last section, we'll do some exploratory analysis on Jelle's Marble Runs. This is a YouTube channel <https://www.youtube.com/channel/UCYJdpnjuSWVOLgGT9fIzL0g> that hosts Olympic-style competitions for marbles, including the Marblelympics. (You may have seen this on Last Week Tonight with John Oliver <https://youtu.be/z4gBMw64aqk?t=1067>) The table we'll be using for this section has all the data on the results from the 2020 Marbula One competition. This section is very open-ended; the questions will guide you through the basic steps of exploratory data analysis, but there many, many different ways to answer questions 12-14.
+
+---
+
+11. Read in the marbles dataset, available at the link <https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-06-02/marbles.csv>
+
+```{r}
+marbles <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-06-02/marbles.csv')
+```
+
+12. Pick a variable to explore and make a plot highlighting it using `ggplot`
+
+```{r}
+ggplot(marbles, aes(x = time_s)) +
+  geom_density(aes(fill = team_name)) +
+  scale_fill_viridis_d() +
+  facet_wrap(~ team_name) +
+  labs(x = 'Time (s)') +
+  theme_classic() +
+  theme(legend.position = 'none')
+```
+
+13. Pick a question to answer with a statistical test. Write down both your question and the test you'll use below.
+
+**Question:** TYPE YOUR QUESTION HERE Are some teams better than other teams? Do some marble teams consistently get better times than others?
+**Test:** TYPE THE TEST YOU PICKED HERE *ANOVA*
+
+14. Use the chunk below to run your statistical test. What is your conclusion?
+
+*TYPE YOUR CONCLUSION HERE* There are no teams that are statistically significantly faster than other teams. This makes intuitive sense, since the outcomes of rolling marbles down tracks should be random.
+
+```{r}
+aov(time_s ~ team_name, data = marbles) %>%
+  TukeyHSD() %>%
+  tidy() %>%
+  filter(adj.p.value < 0.05)
+```
+
+
+
+<br>
+
+

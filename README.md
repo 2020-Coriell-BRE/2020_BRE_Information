@@ -173,7 +173,8 @@ Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>
 - [demo Rmd](R/2020-07-16_statistics_broom/2020-07-16_statistics_demo.Rmd)
 - [slides](R/2020-07-16_statistics_broom/2020-07-16_statistics_review.pdf)
 
-Today's Assignment: Statistics <https://classroom.github.com/a/4NWo-P_3>
+Today's Assignment: Statistics <https://classroom.github.com/a/4NWo-P_3>  
+[ANSWER KEY](R/2020-07-16_statistics_broom/2020-07-16_statistics_assignment_ANSWER_KEY.Rmd)
 
 ---
 
@@ -195,7 +196,8 @@ Because this is a more involved assignment, it's due **Friday 7/24**
 #### **July 21** Command-Line Server Navigation
 
 - Getting Started with the Server [pdf](RNA-seq/2020-07-21_how_to_use_a_linux_server/get_connected_to_server.pdf)
-- slides
+- [slides](RNA-seq/2020-07-21_how_to_use_a_linux_server/2020-07-21_how_to_use_the_server.pdf)
+- Rough list from `history` of all commands shown today [server\_navigation_demo.txt](RNA-seq/2020-07-21_how_to_use_a_linux_server/server_navigation_demo.txt)
 
 Today's Assignment: Practice Server Commands Playing Terminus <https://classroom.github.com/a/sIUEXjYO>
 

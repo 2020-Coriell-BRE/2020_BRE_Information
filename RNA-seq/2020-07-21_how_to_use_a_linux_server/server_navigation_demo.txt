@@ -1,0 +1,116 @@
+   99  ls
+  100  ls rnaseq_practice/
+  101  mkdir test directory
+  102  ls
+  103  rmdir directory test
+  104  ls
+  105  ls rnaseq_practice/
+  106  mkdir rna
+  107  ls 
+  108  rmdir rna
+  109  ls
+  110  ls -l
+  111  ls -h
+  112  ls -lh
+  113  pwd
+  114  cd rnaseq_practice/
+  115  ls
+  116  cd data/
+  117  ls
+  118  cd ../
+  119  ll
+  120  echo 'practice file' > file.text
+  121  ll /home/
+  122* cp file.text /home/harman/rnaseq_practice/
+  123  ls
+  124  head file.text
+  125  tail file.text
+  126  more file.text 
+  127  less file.text
+  128  cat file.text 
+  129  cd data/
+  130  ls
+  131  head dac1_chr21_R1.fastq.gz 
+  132  zcat dac1_chr21_R1.fastq.gz | head
+  133  cd ../
+  134  ls
+  135  pwd
+  136  ls ../
+  137  ls ./
+  138  ls /home/kkeith/rnaseq_practice/
+  139  touch file2.txt
+  140  ls
+  141  head file2.txt 
+  142  nano file2.txt 
+  143  head file2.txt 
+  144  cd ~
+  145  pwd
+  146  cd -
+  147  ls
+  148  cp file2.txt file2_copy.txt
+  149  ls
+  150  head file2_copy.txt 
+  151  head file2.txt 
+  152  cp file2.txt analysis/
+  153  ls
+  154  ls analysis/
+  155  mv file2_copy.txt analysis/
+  156  ls
+  157  ls analysis/
+  158  ls
+  159  mv file.text new_name.txt
+  160  ls
+  161  head new_name.txt 
+  162  ls
+  163  cd analysis/
+  164  ls
+  165  rm file2.txt
+  166  ls
+  167  touch temp.txt
+  168  ls
+  169  rm file2_copy.txt temp.txt 
+  170  ls
+  171  cd ..
+  172  ls
+  173  mkdir folder
+  174  ls
+  175  mv new_name.txt 
+  176  mv -h
+  177  mv --help
+  178  ls
+  179  mv file2.txt new_name.txt folder/
+  180  ls
+  181  ls folder/
+  182  rmdir folder/
+  183  mv folder/file2.txt folder/new_name.txt ./
+  184  ls
+  185  ls folder/
+  186  rmdir folder/
+  187  ls
+  188  mkdir folder
+  189  mv file2.txt new_name.txt folder/
+  190  ls
+  191  ls folder/
+  192  rm -r folder/
+  193  ls
+  194  ls *
+  195  cd data
+  196  ls
+  197  ls dac*
+  198  touch example.txt
+  199  ls
+  200  ls *.fastq.gz
+  201  touch log.fastq.gz.txt
+  202  ls
+  203  ls *.fastq.gz
+  204  ls *.fastq.gz*
+  205  ls *c*
+  206  ls *D*
+  207  ls *d*
+  208  ls *[dD]*
+  209  ls *R[1-2]*
+  210  cd ..
+  211  ls
+  212  history
+  213  cd ..
+  214  history > server_navigation_demo.txt
