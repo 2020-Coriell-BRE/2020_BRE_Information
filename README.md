@@ -202,3 +202,10 @@ Because this is a more involved assignment, it's due **Friday 7/24**
 Today's Assignment: Practice Server Commands Playing Terminus <https://classroom.github.com/a/sIUEXjYO>
 
 - Terminus <https://web.mit.edu/mprat/Public/web/Terminus/Web/main.html>
+
+---
+
+#### **July 22** More Command-Line
+
+- slides
+- tmux cheatsheet <https://gist.github.com/MohamedAlaa/2961058>
