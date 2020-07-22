@@ -207,5 +207,5 @@ Today's Assignment: Practice Server Commands Playing Terminus <https://classroom
 
 #### **July 22** More Command-Line
 
-- slides
+- [slides](RNA-seq/2020-07-22_how_to_use_a_linux_server2/2020-07-22_how_to_use_a_linux_server2.pdf)
 - tmux cheatsheet <https://gist.github.com/MohamedAlaa/2961058>
