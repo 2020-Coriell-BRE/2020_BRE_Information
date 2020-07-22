@@ -202,6 +202,7 @@ Because this is a more involved assignment, it's due **Friday 7/24**
 Today's Assignment: Practice Server Commands Playing Terminus <https://classroom.github.com/a/sIUEXjYO>
 
 - Terminus <https://web.mit.edu/mprat/Public/web/Terminus/Web/main.html>
+- **Assignment ANSWER:** The password to get into Paradise is IHTFP.
 
 ---
 
@@ -209,3 +210,10 @@ Today's Assignment: Practice Server Commands Playing Terminus <https://classroom
 
 - [slides](RNA-seq/2020-07-22_how_to_use_a_linux_server2/2020-07-22_how_to_use_a_linux_server2.pdf)
 - tmux cheatsheet <https://gist.github.com/MohamedAlaa/2961058>
+
+---
+
+#### **July23** Process RNA-seq Data
+
+- RNA-seq processing [code](RNA-seq/2020-07-23_process_rna-seq/process_rnaseq.md)
+- slides 
