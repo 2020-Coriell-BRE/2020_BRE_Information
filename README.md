@@ -213,7 +213,15 @@ Today's Assignment: Practice Server Commands Playing Terminus <https://classroom
 
 ---
 
-#### **July23** Process RNA-seq Data
+#### **July 23** Process RNA-seq Data Day 1
 
 - RNA-seq processing [full code](RNA-seq/2020-07-23_process_rna-seq_day1/process_rnaseq.md), [code covered in class](RNA-seq/2020-07-23_process_rna-seq_day1/rna-seq_demo_doc.md)
 - [slides](RNA-seq/2020-07-23_process_rna-seq_day1/2020-07-23_process_rnaseq_day1.pdf) 
+
+#### **July 24** Process RNA-seq Data Day 2
+
+-  RNA-seq processing [full code](RNA-seq/2020-07-23_process_rna-seq_day1/process_rnaseq.md)
+-  slides
+
+Assignment: [Process RNA-seq Data](RNA-seq/2020-07-24_process_rna-seq_day2/rnaseq_data_processing_assignment.md)  
+Tissue Sign Up Google Doc <https://docs.google.com/spreadsheets/d/1qea2Zgy1OuA-nUgMrdDKemS1QTN2n2m_fEk9mNH2_JA/edit?usp=sharing>
