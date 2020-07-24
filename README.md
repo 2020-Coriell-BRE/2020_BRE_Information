@@ -224,4 +224,6 @@ Today's Assignment: Practice Server Commands Playing Terminus <https://classroom
 -  slides
 
 Assignment: [Process RNA-seq Data](RNA-seq/2020-07-24_process_rna-seq_day2/rnaseq_data_processing_assignment.md)  
-Tissue Sign Up Google Doc <https://docs.google.com/spreadsheets/d/1qea2Zgy1OuA-nUgMrdDKemS1QTN2n2m_fEk9mNH2_JA/edit?usp=sharing>
+
+- RNA-seq files are on the server at `/mnt/data/encode_tissue_data/`
+- Tissue Sign Up Google Doc <https://docs.google.com/spreadsheets/d/1qea2Zgy1OuA-nUgMrdDKemS1QTN2n2m_fEk9mNH2_JA/edit?usp=sharing>
