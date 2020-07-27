@@ -96,6 +96,8 @@ The Bioinformatics Research Experience is a four-week research training program 
 - Introduction to all things Git: Git, GitHub, GitHub Desktop and GitHub Classroom
 - [slides](R/2020-07-07_intro_to_git/2020-07-07_git.pdf)
 
+<br>
+
 Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr>
 
 ---
@@ -110,6 +112,8 @@ Today's Assignment: **GitHub Practice** <https://classroom.github.com/a/kNgsFDtr
 - [demo Rmd](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_rmarkdown_and_dplyr_demo.Rmd)
 - [slides](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_intro_to_r.pdf)
 
+<br>
+
 Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>  
 [ANSWER KEY](R/2020-07-08_intro_to_rmarkdown_tidyverse_dplyr/2020-07-08_dplyr_assignment_ANSWERS.Rmd)
 
@@ -121,6 +125,8 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/6j30_kft>
 - [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo.Rmd), updated [demo Rmd](R/2020-07-09_ggplot/2020-07-09_ggplot2_demo_INCLASS.Rmd) with in class additions
 - [slides](R/2020-07-09_ggplot/2020-07-09_plotting_ggplot2.pdf)
 
+<br>
+
 Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>  
 [ANSWER KEY](R/2020-07-09_ggplot/2020-07-09_ggplot2_assignment_ANSWER_KEY.Rmd)
 
@@ -131,6 +137,8 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
 - How to troubleshoot code
 - How to read a scientific paper
 - [slides](journal_club_assignment/2020-07-10_how_to_read_science_paper.pdf)
+
+<br>
 
 **Journal Club Assignment**
 
@@ -153,6 +161,8 @@ Today's Assignment: **dplyr** <https://classroom.github.com/a/WCFxfVF_>
 - [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-09_readr_tidyr_demo.Rmd), updated [demo Rmd](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr_demo_INCLASS.Rmd) with in class additions
 - [slides](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr.pdf)
 
+<br>
+
 Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6syth>  
 [ANSWER KEY](R/2020-07-14_readr_and_tidyr/2020-07-14_readr_tidyr_assignment_ANSWERKEY.Rmd)
 
@@ -162,6 +172,8 @@ Today's Assignment: **readr** and **tidyr** <https://classroom.github.com/a/rLa6
 
 - [demo Rmd](R/2020-07-15_clustering/2020-07-15_clustering_demo.Rmd)
 - [slides](R/2020-07-15_clustering/2020-07-15_clustering.pdf)
+
+<br>
 
 Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>  
 [ANSWER KEY](R/2020-07-15_clustering/2020-07-15_clustering_assignment_ANSWERKEY.Rmd )
@@ -173,6 +185,8 @@ Today's Assignment: Clustering <https://classroom.github.com/a/UDYxMOkf>
 - [demo Rmd](R/2020-07-16_statistics_broom/2020-07-16_statistics_demo.Rmd)
 - [slides](R/2020-07-16_statistics_broom/2020-07-16_statistics_review.pdf)
 
+<br>
+
 Today's Assignment: Statistics <https://classroom.github.com/a/4NWo-P_3>  
 [ANSWER KEY](R/2020-07-16_statistics_broom/2020-07-16_statistics_assignment_ANSWER_KEY.Rmd)
 
@@ -183,6 +197,8 @@ Today's Assignment: Statistics <https://classroom.github.com/a/4NWo-P_3>
 - mini heatmap [demo Rmd](R/2020-07-17_exploratory_data_analysis/pheatmap_annotations.Rmd)
   - And the [data](R/2020-07-17_exploratory_data_analysis/colon.csv) for it
 - [slides](R/2020-07-17_exploratory_data_analysis/2020-07-16_grabbag_exploratory_data_analysis.pdf)
+
+<br>
 
 Today's Assignment: Exploratory Data Analysis <https://classroom.github.com/a/sUlgFd-I>  
 Because this is a more involved assignment, it's due **Friday 7/24**
@@ -198,6 +214,8 @@ Because this is a more involved assignment, it's due **Friday 7/24**
 - Getting Started with the Server [pdf](RNA-seq/2020-07-21_how_to_use_a_linux_server/get_connected_to_server.pdf)
 - [slides](RNA-seq/2020-07-21_how_to_use_a_linux_server/2020-07-21_how_to_use_the_server.pdf)
 - Rough list from `history` of all commands shown today [server\_navigation_demo.txt](RNA-seq/2020-07-21_how_to_use_a_linux_server/server_navigation_demo.txt)
+
+<br>
 
 Today's Assignment: Practice Server Commands Playing Terminus <https://classroom.github.com/a/sIUEXjYO>
 
@@ -218,12 +236,25 @@ Today's Assignment: Practice Server Commands Playing Terminus <https://classroom
 - RNA-seq processing [full code](RNA-seq/2020-07-23_process_rna-seq_day1/process_rnaseq.md), [code covered in class](RNA-seq/2020-07-23_process_rna-seq_day1/rna-seq_demo_doc.md)
 - [slides](RNA-seq/2020-07-23_process_rna-seq_day1/2020-07-23_process_rnaseq_day1.pdf) 
 
+---
+
 #### **July 24** Process RNA-seq Data Day 2
 
 -  RNA-seq processing [full code](RNA-seq/2020-07-23_process_rna-seq_day1/process_rnaseq.md)
 -  [slides](RNA-seq/2020-07-24_process_rna-seq_day2/2020-07-23_process_rnaseq_day2.pdf)
+-  Download and upload files via command line [instructions in md](software/command_line_file_transfer.md) and [in pdf](software/command_line_file_transfer.pdf)
+
+<br>
 
 Assignment: [Process RNA-seq Data](RNA-seq/2020-07-24_process_rna-seq_day2/rnaseq_data_processing_assignment.md)  
 
 - RNA-seq files are on the server at `/mnt/data/encode_tissue_data/`
 - Tissue Sign Up Google Doc <https://docs.google.com/spreadsheets/d/1qea2Zgy1OuA-nUgMrdDKemS1QTN2n2m_fEk9mNH2_JA/edit?usp=sharing>
+
+---
+
+#### **July 28** Analyze RNA-seq Day 1
+
+- Analyze RNA-seq [demo code](RNA-seq/2020-07-28_analyze_rna-seq/2020-07-28_diff_exp_w_DESeq2.Rmd )
+- slides
+- DESeq2 <https://bioconductor.org/packages/release/bioc/html/DESeq2.html>
