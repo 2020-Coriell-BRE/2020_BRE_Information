@@ -256,5 +256,5 @@ Assignment: [Process RNA-seq Data](RNA-seq/2020-07-24_process_rna-seq_day2/rnase
 #### **July 28** Analyze RNA-seq Day 1
 
 - Analyze RNA-seq [demo code](RNA-seq/2020-07-28_analyze_rna-seq/2020-07-28_diff_exp_w_DESeq2.Rmd )
-- slides
+- [slides](RNA-seq/2020-07-28_analyze_rna-seq/2020-07-28_analyze_rnaseq.pdf)
 - DESeq2 <https://bioconductor.org/packages/release/bioc/html/DESeq2.html>
