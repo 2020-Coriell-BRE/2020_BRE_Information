@@ -1,0 +1,378 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(magrittr)
+library(conflicted)
+library(vroom)
+
+library(DESeq2)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br><br>
+
+# Differential Expression with `DESEq2`
+
+We will be conducting differential expression analysis with the goal of identifying genes that have changed their activity in response to some perturbation (in our example data, treatment with DAC) using the R Bioconductor package `DESeq2`. `DESeq2` is a popular and user-friendly package to perform differential expression using negative binomical generalized linear models. This lesson will cover the basics, but for more details you can check the `DESeq2` Vignette <https://bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#annotating-and-exporting-results>
+
+---
+
+The data we have been using for this RNA-seq tutorial is from a former PhD student in the lab, Sandra Deliard. We have two sets of triplicates both in YB5 cells, control (siC) and treated with DAC (dac). DAC is a DNA methyltransferase inhibitor (DNMT) and treatment with it results in global hypomethylation and increased expression. Details for the sample names are given in the table below.
+
+| Sample ID | treatment | replicate |
+| --- | --- | --- |
+| dac1 | 5-aza-2'-deoxyctyidine, aka decitabine, DAC | 1 |
+| dac2 | 5-aza-2'-deoxyctyidine, aka decitabine, DAC | 2 |
+| dac3 | 5-aza-2'-deoxyctyidine, aka decitabine, DAC | 3 |
+| siCl | control | 1 |
+| siC2 | control | 2 |
+| siC3 | control | 3 |
+
+---
+
+<br>
+
+## Install Packages
+
+If you don't have any of the necessary packages installed, uncomment the install lines in the chunk below and install them.
+
+```{r}
+### vroom
+# The vroom package has one function, vroom, for fast and lazy data read in. 
+# Vroom works like readr, but is much faster with a 55-60x speedup.
+#install.packages('vroom')
+
+### DESeq2
+# Package to do differential expression
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#
+#BiocManager::install("DESeq2")
+
+### AnnotationDbi
+# Bioconductor package that interfaces between R and Bioconductor's SQLite-based 
+# biological data annotation packages
+# BiocManager::install("AnnotationDbi")
+
+### org.Hs.eg.db
+# Bioconductor package that contains the current human (Hs) annotations; if you
+# want annotations for a different version of the reference genome, you need a 
+# different package 
+#BiocManager::install("org.Hs.eg.db")
+```
+
+<br>
+
+---
+
+<br>
+
+## Read / Wrangle Files
+
+### Read Files in Recursively
+
+```{r}
+# get list of files
+list.files(path = 'data', 
+           pattern = 'counts.txt',
+           full.names = T) -> files
+
+# Use vroom::vroom to read the files in fast, lazily, and recursively. 
+# delim = '\t' tells vroom that the files are tab separated
+# comment = '#' and skip = 2 tells vroom to skip the comment lines and the 
+# column name line and start reading in the files in where the data starts at 
+# line 2. This is necessary because the files do not have the same column names,
+# so we will tell vroom what they are manually. Also, give vroom the column 
+# names so the files all have the same column names
+vroom(file = files, id = 'file_path', delim = '\t', comment = '#', skip = 2,
+      col_names = c('ensembl_gene_id', 'chr', 'start', 'end', 
+                    'strand', 'length', 'count')) %>%
+# Add the sample ID as an additional column using str_extract(), which pulls a
+# string based on the regular expression you give it. Here I asked for strings
+# starting with either d or s, followed by any two letters of the alphabet 
+# either upper or lower case followed by any number
+  mutate(sample_id = str_extract(file_path, '[d,s][A-z]{2}[0-9]'),
+# Add the treatment by checking whether the sample ID starts with dac; if it 
+# does that sample is labelled as treatment, otherwise its labelled as control
+         treatment = ifelse(str_detect(sample_id, 'dac'), 
+                            'treatment', 'control')) %>%
+# drop the file path because we don't need it anymore.
+  dplyr::select(-file_path) -> data
+
+data %>% distinct(sample_id, treatment)
+```
+
+<br>
+
+### Wrangle Data for `DESeq2`
+
+`DESeq2` requires that the data be in an S4 object of class `DESeqDataSet` before you can use its functions to conduct differential expression. `DESeq2` and Bioconductor pacakges in general like to use S4 objects because S4s have very strict definitions, which prevent users from making naive mistakes in creating and modifying them. S4 objects have slots that can be filled with whatever information the creator specifies. For a `DESeqDataSet`, a custom S4 class, this includes, but is not limited to, the raw RNA-seq counts, metadata (ex: treatement, batch) from the experiment, experimental design, and the results of the differential expression analysis.
+
+**TL;DR** `DESeq2` requires data to be in a specific and semi-custom format before you can calculate differential expression, so we'll put the data into that format in this section.
+
+---
+
+Here we're going to make two tables; a count matrix with genes as rows, samples as columns and read counts as the data, and a metadata table with the sample IDs and any other relevant information. Here the information is just treatment, but it could include other covariates like sex or batch. **NOTE:** The columns in the count matrix and the rows in the metadata table *MUST BE THE SAME* and *IN THE SAME ORDER* or the information in the count matrix and the metadata tables will not be matched up properly.
+
+```{r}
+data %>%
+  dplyr::select(ensembl_gene_id, sample_id, count) %>%
+  pivot_wider(names_from = sample_id, values_from = count) %>% 
+  as.data.frame() -> count_matrix
+
+data %>%
+  dplyr::select(sample_id, treatment) %>%
+  distinct() -> metadata
+```
+
+<br>
+
+#### Convert to DESeq2 DESeqDataSet Object
+
+Use the helper function `DESeqDataSetFromMatrix()` to put our data into a `DESeqDAtaSet` object.
+
+```{r}
+# given the function the count and metadata tables
+dds <- DESeqDataSetFromMatrix(countData = count_matrix,
+                              colData = metadata,
+# tidy = T says that our data is in tidy format and the first columns of the
+# tables should be taken as row.names
+                              tidy = TRUE,
+# Give the design of the experiment, here just taking treatment into account
+                              design = ~ treatment)
+```
+
+<br>
+
+#### Pre-filter the dataset
+
+It's standard to pre-filter data for hypothesis tests because you don't want to include genes that for example, have no counts detected in any samples or have extrememly low counts in many samples and have to have an increased multiple testing correction.
+
+```{r}
+### filter out rows that contain only zero counts
+keep <- rowSums(counts(dds)) > 1
+dds <- dds[keep, ]
+
+### NOT DOING, but example
+# Filter for genes where at least three samples have a count of 10 or higher
+# keep <- rowSums(counts(dds) >= 10) >= 3
+# dds <- dds[keep, ]
+```
+
+<br>
+
+---
+
+<br>
+
+## Check Quality by Examing the Associations Between Samples
+
+For whatever reason, sometimes one or a few samples can have divergent measurements from the rest of the data. We want to check for that before doing differential expression so we can correct for it, for example by including batch as a covariate in our model or using a package like `RUVSeq` to perform further specialized normalizations.
+
+<br>
+
+### PCA
+
+For our check, we'll use Principal Component Analysis (PCA) to see how well our observed variation corresponds with our variables of interest. We'll do this in 2 ways, first using the built-in functions that `DESeq2` has for PCA analysis and second using standard R functions.
+
+<br>
+
+#### `DESEq2` Functions
+
+`DESeq2` stores raw (non-normalized) counts in the `DESeqDataSet` object, but requires that those counts be normalized before calculating the PCA. RNA-seq counts follow a negative binomial distribution instead of a normal distribution, so they need to be normalized before man
+
+```{r, fig.width = 5, fig.height = 5}
+### must use normalized counts for the DESeq PCA function
+# Why? See the negative binomial distribution; most genes have low counts with
+# a few genes having extremely high counts
+ggplot(data, aes(x = count)) +
+  geom_density() +
+  coord_cartesian(xlim = c(0, 100)) +
+  theme_classic(base_size = 20)
+
+# normalize the counts
+vsd <- varianceStabilizingTransformation(dds, blind = FALSE)
+```
+
+`DESeq2` doesn't have a separate function for calculating the PCA, it calculates and plots it in a single step.
+
+```{r}
+# use the DESeq function to plot PCA
+plotPCA(vsd, intgroup = 'treatment') 
+
+# this is a ggplot object, so we can modify it like a normal ggplot
+plotPCA(vsd, intgroup = 'treatment') +
+  geom_point(size = 6) +
+  scale_color_manual(values = c('gold3', 'hotpink4')) +
+  theme_classic()
+```
+
+<br>
+
+#### Standard R Functions
+
+While technically data should be normally distributed before calculating the PCA, it can be done without normalization. If you're curious about the differences (usually minimal and definitely neglible for this data), you can can install the `glmpca` package and calculate the PCA using `glmpca::glmpca()` which explicitly corrects for non-normally distributed data.
+
+```{r, fig.height = 5, fig.width = 5}
+# Calculate the PCA
+prcomp(t(counts(dds))) -> dds_prcomp
+
+# plot
+dds_prcomp$x %>%
+  as.data.frame() %>%
+  rownames_to_column('sample_id') %>%
+  mutate(treatment = ifelse(str_detect(sample_id, 'dac'), 'DAC', 'control')) %>%
+
+ggplot(aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = treatment), size = 6) +
+  scale_color_manual(values = c('gold3', 'hotpink4')) +
+  theme_classic(base_size = 20) +
+  theme(legend.position = 'top')
+```
+
+<br>
+
+---
+
+<br>
+
+## Differential Expression
+
+### Calculate differential expression
+
+`DESeq2` calculates differential expression by fitting a negative bionomial generalized linear model with the design you gave the object in the treatment argument. Corrects for multiple testing using the Benjamini-Hotchberg (BH) correction.
+
+```{r}
+dds <- DESeq(dds)
+```
+
+<br>
+
+### Wrangle and Save the Results
+
+Before extracting the differential expression results from the `DESeqDataSet` object, we want to get human readable gene names. Our gene names are currently given as Ensembl IDs. However, the HUGO Gene Nomenclature Committee sets standard human readable gene names that we're going to add to our data, so we can look at the differentally expressed genes and get an idea of what's affected. Bioconductor has the `AnnotationDbi` package, which is an interface to query Bioconductor's SQLite-based annotation data packages. Here we'll use `AnnotationDbi` functions to query the `org.Hs.eg.db` package, which has the human genome annotations
+
+```{r}
+# check which annotations are available.
+columns(org.Hs.eg.db)
+
+# use the Ensembl IDs to find the corresponding HGNC IDs
+mapIds(org.Hs.eg.db, 
+       keys = rownames(results(dds)), 
+       column = 'SYMBOL',
+       keytype = 'ENSEMBL',
+       multiVals = 'first') %>% 
+  enframe(name = 'ensembl_gene_id', value = 'gene') -> gene_names
+```
+
+Wrangle the differential expression result object to get a rectangular table.
+
+```{r}
+results(dds) %>% 
+# Convert to a rectangular, tidy table with no rownames
+  as.data.frame() %>%
+  rownames_to_column('ensembl_gene_id') %>%
+# Join in the HGNC gene names
+  left_join(gene_names, by = 'ensembl_gene_id') %>%
+# Reorder for readability
+  dplyr::select(gene, ensembl_gene_id, everything()) %>%
+# Add columns indicating statistical significance and logging p-values; this 
+# will be useful in a minute when we plot the results.
+  mutate(sig = ifelse(padj < 0.05 & abs(log2FoldChange) >= 1, 
+                      'sig', 'notsig'),
+         log_qvalue = -log10(padj)) %>%
+# NA is assigned to p-values that are outliers, replace in the log_qvalue 
+# column with the nonsignificant 0
+  replace_na(list(sig = 'notsig', log_qvalue = 0)) -> diff_exp_tbl
+```
+
+Save the results of the differential expression test.
+
+```{r}
+# write_tsv(diff_exp_tbl, 'diff_exp.tsv')
+```
+
+<br>
+
+---
+
+<br>
+
+## Visualize Results
+
+### MA Plot
+
+An MA plot is a type of scatterplot with average values plotted on the x-axis and the difference in values plotted on the y-axis. As standard for RNA-seq, here we'll plot the mean expression count on the x-axis and the log2 fold change in expression on the y-axis for each gene. This lets us examine how gene expression changed between groups relative to their overall expression.
+
+```{r, fig.width = 6, fig.height = 6}
+# Create labels for the number and percentage of significantly up- and down- 
+# regulated genes
+diff_exp_tbl %>%
+  mutate(direction = ifelse(log2FoldChange < 0, 'down', 'up')) %>%
+  group_by(direction, sig) %>%
+  dplyr::count() %>%
+  ungroup() %>%
+  # complete(direction, sig, fill = list(n = 0)) %>%
+  # na.omit() %>%
+  filter(sig == 'sig') %>%
+  mutate(label = paste0(n, ', ', round((n / nrow(diff_exp_tbl)), 1), '%'),
+         baseMean = 1750,
+         log2FoldChange = c(-3, 4)) -> ma_labels
+
+# plot
+ggplot(diff_exp_tbl, aes(x = baseMean, y = log2FoldChange)) +
+  geom_point(aes(color = sig)) +
+  scale_color_manual(values = c('gray30', 'firebrick3')) +
+  geom_hline(yintercept = 0, color = 'gray60', linetype = 'dashed') +
+  geom_text(data = ma_labels, aes(label = label), size = 8) +
+  labs(x = 'Mean Expression (Counts)', y = 'Log2 Fold Change') +
+  theme_classic(base_size = 20) +
+  theme(legend.position = 'none')
+  NULL
+```
+
+### Volcano Plot
+
+A volcano plot is a type of scatterplot with the difference in values plotted on the x-axis and the significance of those values plotted on the y-axis. As standard for RNA-seq, here we'll plot the log2 fold change in expression on the x-axis and the negative log10 corrected p-values (q-values) on the y-axis for each gene. We plot negative log10 significance values for better visualization because now the most signficant values appear at the top of the plot. The volcano plot highlights the most significant most change values.
+
+```{r, fig.width = 6, fig.height = 6}
+# Create labels for the number and percentage of significantly up- and down- 
+# regulated genes
+diff_exp_tbl %>%
+  mutate(direction = ifelse(log2FoldChange < 0, 'down', 'up')) %>%
+  group_by(direction, sig) %>%
+  dplyr::count() %>%
+  ungroup() %>%
+  # complete(direction, sig, fill = list(n = 0)) %>%
+  # na.omit() %>%
+  filter(sig == 'sig') %>%
+  mutate(label = paste0(n, ', ', round((n / nrow(diff_exp_tbl)), 1), '%'),
+         log2FoldChange = c(-3.5, 3.5),
+         log_qvalue = 4) -> volc_labels
+
+# plot
+ggplot(diff_exp_tbl, aes(x = log2FoldChange, y = log_qvalue)) +
+  geom_point(aes(color = sig)) +
+  scale_color_manual(values = c('gray30', 'firebrick3')) +
+  geom_hline(yintercept = -log10(0.05), color = 'gray60', linetype = 'dashed') +
+  geom_vline(xintercept = c(-1, 1), color = 'gray60', linetype = 'dashed') +
+  geom_text(data = volc_labels, aes(label = label), size = 8) +
+  labs(x = 'Log2 Fold Change', y = '-Log10 QValue') +
+  coord_cartesian(xlim = c(-5, 5), ylim = c(0, 5)) +
+  theme_classic(base_size = 20) +
+  theme(legend.position = 'none')
+```
+
+<br><br>
+
+
+
+

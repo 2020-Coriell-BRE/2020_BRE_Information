@@ -261,10 +261,18 @@ Assignment: [Process RNA-seq Data](RNA-seq/2020-07-24_process_rna-seq_day2/rnase
 
 ---
 
-#### **July 29** Analyze RNA-seq Day 1
+#### **July 29** Analyze RNA-seq Day 2
+
+- Analyze RNA-seq [demo code](RNA-seq/2020-07-29_analyze_rna-seq_day2/2020-07-28_diff_exp_w_DESeq2_INCLASS.Rmd) with in lecture changes over the past 2 days
 
 <br>
 
 Assignment: Analyze RNA-seq
 
   - assignment in [markdown](RNA-seq/2020-07-29_analyze_rna-seq_day2/analyze_rnaseq.md) and as a pdf [PDF](RNA-seq/2020-07-29_analyze_rna-seq_day2/analyze_rnaseq.pdf)
+
+---
+
+#### **July 30** Analyze RNA-seq Day 3: Pathway Analysis
+
+- pathway analysis [demo code](RNA-seq/2020-07-30_analyze_rna-seq_day3/2020-07-29_gene_set_enrichment_analysis.Rmd)
