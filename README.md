@@ -270,9 +270,10 @@ Assignment: [Process RNA-seq Data](RNA-seq/2020-07-24_process_rna-seq_day2/rnase
 Assignment: Analyze RNA-seq
 
   - assignment in [markdown](RNA-seq/2020-07-29_analyze_rna-seq_day2/analyze_rnaseq.md) and as a pdf [PDF](RNA-seq/2020-07-29_analyze_rna-seq_day2/analyze_rnaseq.pdf)
+  - We never got to this assignment, but if you want to try to complete the RNA-seq analysis on your own, this is what you should do
 
 ---
 
 #### **July 30** Analyze RNA-seq Day 3: Pathway Analysis
 
-- pathway analysis [demo code](RNA-seq/2020-07-30_analyze_rna-seq_day3/2020-07-29_gene_set_enrichment_analysis.Rmd)
+- pathway analysis [demo code](RNA-seq/2020-07-30_analyze_rna-seq_day3/2020-07-29_gene_set_enrichment_analysis.Rmd) and with [in class changes](RNA-seq/2020-07-30_analyze_rna-seq_day3/2020-07-29_gene_set_enrichment_analysis_INCLASS.Rmd)

@@ -1,0 +1,264 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(magrittr)
+library(conflicted)
+library(vroom)
+
+library(fgsea)
+library(viridis)
+
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Pathway Analysis: Gene Set Enrichment Analysis Using `fgsea`
+
+Gene Set Enrichment Analysis tries to identify sets of genes that are enriched in your data. It's used to help make sense of the seemingly random list of differentially expressed genes.
+
+This tutorial was written based on the `fgsea` vignette <http://bioconductor.org/packages/release/bioc/vignettes/fgsea/inst/doc/fgsea-tutorial.html> and Stephen Turner's great blog post on using `fgsea` after `DESeq2` <https://stephenturner.github.io/deseq-to-fgsea/>.
+
+<br>
+
+### Install the Package
+
+If you haven't already installed `fgsea`, uncomment the code in the chunk below and install it. We'll also need the `reactome.db` package for 
+
+```{r}
+### fgsea package for fast gene set enrichment analysis
+# BiocManager::install('fgsea')
+
+### reactome.db package for pathway information
+# BiocManager::install('reactome.db')
+```
+
+<br><br>
+
+---
+
+<br><br>
+
+### Gene Set Enrichment Analysis (GSEA) With Example Data
+
+#### Load the Data
+
+The `data()` function loads the specified data set (as long as it's available in the current R environment). Since we are using the `fgsea` package, we can load the example data that comes with the package. Many R packages, especially ones for biological data analysis in Bioconductor, come with example data that you can use to test code and learn to use the package with.
+
+```{r}
+data(exampleRanks)
+```
+
+<br>
+
+Let's look at the data we just loaded. When we check its class, it returns `"numeric"`, which means that it is a one-dimensional vector of numbers. Then when we check the beginning of the data with `head()`, we can see that each entry has two numbers associated with it. The top number is the Entrez ID for the gene and the bottom number is the significance (t-statistic) associated with that gene (you can get this information by reading the documentation). The test statistic will be used to rank the genes.
+
+```{r}
+# check the class
+exampleRanks %>% class()
+
+# look at the data
+exampleRanks %>% head()
+```
+
+#### Calculate GSEA
+
+You need to give it a set of pathways to use. Here we'll use the Reactome database pathways. Reactome, <https://reactome.org/>, is one of the largest pathway databases available and the data are high quality as they are manually curated. The database is also open-source, open access and peer-reviewed, and most importantly for us, accessible through the `fgsea` package. For `fgsea` you can also supply your own list of gene sets in `gmt` format. (See the Broad GSEA documentation for more information on `gmt` files.)
+
+---
+
+Load the Reactome pathways
+
+```{r}
+# use Reactome pathwayse
+reactome_pathways <- reactomePathways(names(exampleRanks)) 
+```
+
+<br>
+
+Calculate the enrichment. You need to specify the list with the pathways, your vector with the genes and their significance, and the number of permutations for the empirical p-value calculation.
+
+```{r}
+fgsea_res <- fgsea(pathways = reactome_pathways, 
+                   stats = exampleRanks, 
+                   nperm = 1000)
+```
+
+<br>
+
+Look at the results! The `fgsea()` function returns a `data.frame`, which makes it easy to use for plotting or other actions afterwards. The table contains information on how enriched each pathway is in the data and how significantly. You can check this information for yourself in the `fgsea()` function documentation anytime, but the columns are:
+
+- **pathway**: name of the pathway as given in the pathway list
+- **pval**: "significance" of the enrichment score calculated by a permutation test
+- **padj**: p-value adjusted for multiple testing using Benjamini-Hotchberg (BH)
+- **ES**: pathway enrichment score; positive for upregulated and negative for downregulated
+- **NES**: enrichment score normalized by permutation test
+- **nMoreExtreme**: the number of times a random gene set had a more extreme enrichment enrichment value in the permutations (out of 10,000 here because that's the number of permutations we specified)
+- **size**: number of genes present in the data in the pathway
+- **leadingEdge**: vector of genes that drive the enrichment
+
+To get the genes out of the leadingEdge column, use the `tidyr::unnest()` function. Note that everything in the row that was already there gets duplicated for each gene name that was in the nested vector.
+
+```{r}
+# fgsea() returns a data.frame! YAY!!
+fgsea_res %>% class()
+
+fgsea_res %>% arrange(padj)
+
+# look at the data
+fgsea_res %>% filter(pathway == "Cell Cycle")
+
+# get the genes that are driving the enrichment score
+fgsea_res %>%
+  unnest(c(leadingEdge))
+```
+
+<br><br>
+
+#### Visualize
+
+If there's a particular pathway of interest, you can plot the cumulative enrichment curve for it using the pathways and data used to calculate the gene set enrichment, using `fgsea`'s `plotEnrichment()` function. It returns a `ggplot` object, so you can modify it using `ggplot` arguments somewhat.
+
+```{r}
+plotEnrichment(reactome_pathways[["Cell Cycle"]],
+               exampleRanks) +
+  labs(title = "Cell Cycle")
+
+# example of bad, not enriched pathway
+plotEnrichment(reactome_pathways[["A tetrasaccharide linker sequence is required for GAG synthesis"]],
+               exampleRanks) 
+
+# The black lines on the x-axis, the rug, represent genes that are in the 
+# pathway. It's easy to see in the pathway below where only 2 genes from the 
+# data are in it.
+plotEnrichment(reactome_pathways[["5-Phosphoribose 1-diphosphate biosynthesis"]],
+               exampleRanks) +
+  labs(title = "Cell Cycle")
+```
+
+<br>
+
+Look at the top 10 most up- and down-regulated statistically significant pathways.
+
+```{r}
+fgsea_res %>% #arrange(desc(nchar(pathway)))
+# filter for significant pathways
+  filter(padj < 0.05) %>%
+# arrange by the normalized enrichment score
+  arrange(NES) %>% 
+# get the first and last 10 rows which will be the 10 most up- and down- 
+# regulated pathways
+  do(rbind(head(., 10), tail(., 10))) %>%
+# the pathway names can be long, so if they're over 20 characters, subset them
+# otherwise use the whole name
+  mutate(pathway_short = ifelse(nchar(pathway) <= 30, 
+                                pathway, 
+                                paste0(str_sub(pathway, start = 1, end = 27), 
+                                       '...'))) %>%
+
+ggplot(aes(x = reorder(pathway_short, NES), y = NES)) +
+  geom_col(aes(fill = padj)) +
+  scale_fill_viridis() +
+  coord_flip() +
+  labs(x = 'Pathway', 
+       y = 'Normalized Enrichment Score (NES)', 
+       fill = 'Q-Value') +
+  theme_minimal(base_size = 16) 
+  # theme(axis.text.x = element_text(angle = 30, vjust = 0.8))
+```
+
+#### Collapse Pathways
+
+If you look through the list of pathways, you'll notice that some of them are extremely similar. For example "Abacavir metabolism",  "Abacavir transmembrane transport", and 
+"Abacavir transport and metabolism" are almost exactly the same. You can use the `fgsea` function `collapsePathways()` along with your pathway and gene information to collapse the number of pathways down from hundreads or thousands to tens of pathways.
+
+```{r}
+# find the essential top-level pathways
+collapsed_pathways <- collapsePathways(fgsea_res, 
+                                       pathways = reactome_pathways, 
+                                       stats = exampleRanks)
+
+# filter the results for the essential pathways
+fgsea_res %>% 
+  filter(pathway %in% collapsed_pathways$mainPathways) %>%
+  arrange(pathway)
+```
+
+<br>
+
+---
+---
+
+<br>
+
+### With Our Data / Using `DESeq2` Results
+
+Our data that we calculated differential expression for is not good for pathway analysis since we only used one chromosome and only found 11 differentially expressed genes. However, we'll run through the analysis anyway to see what it would look like
+
+#### Read / Wrangle Our Data
+
+Read in the table you saved last week. REMEMBER change the file path so it's correct if you didn't put this .Rmd file in the same directory as your differential expression table.
+
+```{r}
+read_tsv('diff_exp.tsv') -> diff_exp_data
+```
+
+<br>
+
+Change our data into a vector of genes, with Entrez IDs instead of gene names as required for `fgsea()`, and their significance before testing.
+
+```{r}
+### need the Entrez IDs instead of the HGNC ids for fgsea()
+# load the annotation information
+library(org.Hs.eg.db)
+
+# use the mapIds() function to grab the Entrez IDs corresponding to our gene 
+# names
+AnnotationDbi::mapIds(org.Hs.eg.db,
+# give it the unique gene names from our results
+                      keys = unique(diff_exp_data$gene),
+# tell it what format our genes are currently in HGNC ids == "SYMBOL"
+                      keytype = 'SYMBOL',
+# tell mapIds what format we want to look up
+                      column = 'ENTREZID') %>%
+# make it into a table to join back with our differential expression results
+  enframe(name = 'gene', value = 'entrez_id') %>%
+  unnest(c(entrez_id)) -> entrez_ids
+
+### make a named vector of our genes for fgsea()
+diff_exp_data %>%
+# we only need the gene and the significance columns
+  dplyr::select(gene, stat) %>% 
+# drop missing data
+  na.omit() %>%
+  left_join(entrez_ids, by = 'gene') %>%
+# select only the entrez IDs and the t statistic
+  dplyr::select(entrez_id, stat) %>%
+# deframe() turns a table into a vector; enframe() turns a vector in a table
+  deframe() -> diff_exp_res
+```
+
+<br>
+
+Calculate the enrichment as we did above.
+
+```{r}
+de_fgsea <- fgsea(pathways = reactome_pathways, 
+                  stats = diff_exp_res, 
+                  nperm = 1000)
+```
+
+<br>
+
+Look at the results. There is nothing, which is expected with only 238 genes detected and only 11 significanct genes
+
+```{r}
+de_fgsea
+```
+
+
+
+
