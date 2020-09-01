@@ -1,0 +1,345 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(magrittr)
+library(conflicted)
+library(vroom)
+
+library(DESeq2)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+library(fgsea)
+library(viridis)
+
+filter <- dplyr::filter
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br><br>
+
+# Example RNA-seq Report: Differences between Breast and Colon Tissue
+
+Example analysis steps/calculations and visualizations for RNA sequencing (RNA-seq) analysis.
+
+---
+
+<br>
+
+## Read / Wrangle Files
+
+### Read Files in Recursively
+
+```{r}
+# get list of files
+list.files(path = 'count_tables', 
+           pattern = 'counts.txt',
+           full.names = T) -> files
+
+# Read files in recursively
+vroom(file = files, id = 'file_path', delim = '\t', comment = '#', skip = 2,
+      col_names = c('ensembl_gene_id', 'chr', 'start', 'end', 
+                    'strand', 'length', 'count')) %>%
+  mutate(sample_id = str_extract(file_path, 'ENCFF[0-9,A-Z]{6}'),
+         tissue = ifelse(str_detect(file_path, 'breast'), 
+                            'breast', 'colon')) %>%
+  dplyr::select(-file_path) -> data
+```
+
+<br>
+
+### Wrangle Data for `DESeq2`
+
+Transform the data into a count matrix and an annotation table.
+
+```{r}
+data %>%
+  dplyr::select(ensembl_gene_id, sample_id, count) %>%
+  pivot_wider(names_from = sample_id, values_from = count) %>% 
+  as.data.frame() -> count_matrix
+
+data %>%
+  dplyr::select(sample_id, tissue) %>%
+  distinct() -> metadata
+```
+
+<br>
+
+#### Convert to DESeq2 DESeqDataSet Object
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = count_matrix,
+                              colData = metadata,
+                              tidy = TRUE,
+                              design = ~ tissue)
+```
+
+<br>
+
+#### Pre-filter the dataset
+
+Remove rows that contain only zero counts. There's no point in testing genes where nothing was detected.
+
+```{r}
+### filter out rows that contain only zero counts
+keep <- rowSums(counts(dds)) > 1
+dds <- dds[keep, ]
+```
+
+<br>
+
+---
+
+<br>
+
+## Check Quality by Examing the Associations Between Samples
+
+<br>
+
+### PCA
+
+Check to make sure that our groups are distinct from one another and there's no obvious clustering by technical effects. As seen in the PCA plot generated below, PC1 and PC2 separate samples by tissue type, the effect we expect to see.
+
+```{r, fig.width = 4, fig.height = 4}
+# normalize the counts
+vsd <- varianceStabilizingTransformation(dds, blind = FALSE)
+
+# plot the PCa
+plotPCA(vsd, intgroup = 'tissue') +
+  geom_point() +
+  scale_color_manual(values = c('hotpink2', 'hotpink4')) +
+  theme_classic()
+```
+
+<br>
+
+---
+
+<br>
+
+## Differential Expression
+
+### Calculate differential expression
+
+```{r}
+dds <- DESeq(dds)
+```
+
+<br>
+
+### Wrangle and Save the Results
+
+Get human readable gene names 
+
+```{r}
+# check which annotations are available.
+columns(org.Hs.eg.db)
+
+# use the Ensembl IDs to find the corresponding HGNC IDs
+mapIds(org.Hs.eg.db, 
+       keys = rownames(results(dds)), 
+       column = 'SYMBOL',
+       keytype = 'ENSEMBL',
+       multiVals = 'first') %>% 
+  enframe(name = 'ensembl_gene_id', value = 'gene') -> gene_names
+```
+
+Wrangle the differential expression result object to get a rectangular table with the human readable gene IDs.
+
+```{r}
+results(dds) %>% 
+  as.data.frame() %>%
+  rownames_to_column('ensembl_gene_id') %>%
+  left_join(gene_names, by = 'ensembl_gene_id') %>%
+  dplyr::select(gene, ensembl_gene_id, everything()) %>%
+  mutate(sig = ifelse(padj < 0.05 & abs(log2FoldChange) >= 1, 
+                      'sig', 'notsig'),
+         log_qvalue = -log10(padj)) %>%
+  replace_na(list(sig = 'notsig', log_qvalue = 0)) -> diff_exp_tbl
+```
+
+Save the results of the differential expression test.
+
+```{r}
+# write_tsv(diff_exp_tbl, 'diff_exp.tsv')
+```
+
+<br>
+
+---
+
+<br>
+
+## Visualize Results
+
+### MA Plot
+
+Only a few genes are differentially expressed, many of them with originally low counts. 
+
+```{r, fig.width = 4, fig.height = 4}
+diff_exp_tbl %>%
+  mutate(direction = ifelse(log2FoldChange < 0, 'down', 'up')) %>%
+  group_by(direction, sig) %>%
+  dplyr::count() %>%
+  ungroup() %>%
+  filter(sig == 'sig') %>%
+  mutate(label = paste0(n, ', ', round((n / nrow(diff_exp_tbl)), 1), '%'),
+         baseMean = 850,
+         log2FoldChange = c(-8, 8)) -> ma_labels
+
+# plot
+ggplot(diff_exp_tbl, aes(x = baseMean, y = log2FoldChange)) +
+  geom_text(data = ma_labels, aes(label = label), size = 8) +
+  geom_point(aes(color = sig)) +
+  scale_color_manual(values = c('gray30', 'firebrick3')) +
+  geom_hline(yintercept = 0, color = 'gray60', linetype = 'dashed') +
+  labs(x = 'Mean Expression (Counts)', y = 'Log2 Fold Change') +
+  coord_cartesian(xlim = c(0, 1000), ylim = c(-10, 10)) +
+  theme_classic(base_size = 20) +
+  theme(legend.position = 'none')
+```
+
+### Volcano Plot
+
+Only a few up- and down-regulated genes.
+
+```{r, fig.width = 6, fig.height = 6}
+# Create labels for the number and percentage of significantly up- and down- 
+# regulated genes
+diff_exp_tbl %>%
+  mutate(direction = ifelse(log2FoldChange < 0, 'down', 'up')) %>%
+  group_by(direction, sig) %>%
+  dplyr::count() %>%
+  ungroup() %>%
+  # complete(direction, sig, fill = list(n = 0)) %>%
+  # na.omit() %>%
+  filter(sig == 'sig') %>%
+  mutate(label = paste0(n, ', ', round((n / nrow(diff_exp_tbl)), 1), '%'),
+         log2FoldChange = c(-3.5, 3.5),
+         log_qvalue = 4) -> volc_labels
+
+# plot
+ggplot(diff_exp_tbl, aes(x = log2FoldChange, y = log_qvalue)) +
+  geom_point(aes(color = sig)) +
+  scale_color_manual(values = c('gray30', 'firebrick3')) +
+  geom_hline(yintercept = -log10(0.05), color = 'gray60', linetype = 'dashed') +
+  geom_vline(xintercept = c(-1, 1), color = 'gray60', linetype = 'dashed') +
+  geom_text(data = volc_labels, aes(label = label), size = 8) +
+  labs(x = 'Log2 Fold Change', y = '-Log10 QValue') +
+  coord_cartesian(xlim = c(-5, 5), ylim = c(0, 5)) +
+  theme_classic(base_size = 20) +
+  theme(legend.position = 'none')
+```
+
+---
+
+<br>
+
+---
+
+## Pathway Analysis
+
+### Wrangle Differential Expression Data for Pathway Analysis
+
+Get the list of Entrez IDs that correspond to all our genes detected in the differential expression analysis.
+
+```{r}
+# get Entrez IDs from our Ensembl IDs for fgsea()
+AnnotationDbi::mapIds(org.Hs.eg.db,
+                      keys = unique(diff_exp_tbl$ensembl_gene_id),
+                      keytype = 'ENSEMBL',
+                      column = 'ENTREZID',
+                      multiVals = 'first') %>%
+  enframe(name = 'gene', value = 'entrez_id') %>%
+  unnest(c(entrez_id)) -> entrez_ids
+
+# make a named vector of our genes for fgsea()
+diff_exp_tbl %>%
+  dplyr::select(ensembl_gene_id, stat) %>% 
+  left_join(entrez_ids, by = c('ensembl_gene_id' = 'gene')) %>%
+  dplyr::select(entrez_id, stat) %>%
+  deframe() -> diff_exp_res
+```
+
+<br>
+
+### Calculate Pathway Analysis
+
+Load the Reactome pathways
+
+```{r}
+# use Reactome pathwayse
+reactome_pathways <- reactomePathways(names(exampleRanks)) 
+```
+
+Run the pathway analysis
+
+```{r}
+fgsea_res <- fgsea(pathways = reactome_pathways, 
+                   stats = exampleRanks, 
+                   nperm = 1000)
+```
+
+Save results
+
+```{r}
+### save results
+fgsea_res %>%
+  unnest(c(leadingEdge)) #%>%
+  # write_tsv('all_pathway_results.tsv')
+
+### save collapsed results
+# find the essential top-level pathways
+collapsed_pathways <- collapsePathways(fgsea_res, 
+                                       pathways = reactome_pathways, 
+                                       stats = exampleRanks)
+
+# filter the results for the essential pathways
+fgsea_res %>% 
+  filter(pathway %in% collapsed_pathways$mainPathways) %>%
+  arrange(pathway) %>% 
+  unnest(c(leadingEdge)) #%>%
+  # write_tsv('top_level_pathway_results.tsv')
+```
+
+#### Visualize
+
+Look at the top 10 most up- and down-regulated statistically significant pathways.
+
+```{r}
+fgsea_res %>% #arrange(desc(nchar(pathway)))
+# filter for significant pathways
+  filter(padj < 0.05) %>%
+# arrange by the normalized enrichment score
+  arrange(NES) %>% 
+# get the first and last 10 rows which will be the 10 most up- and down- 
+# regulated pathways
+  do(rbind(head(., 10), tail(., 10))) %>%
+# the pathway names can be long, so if they're over 20 characters, subset them
+# otherwise use the whole name
+  mutate(pathway_short = ifelse(nchar(pathway) <= 30, 
+                                pathway, 
+                                paste0(str_sub(pathway, start = 1, end = 27), 
+                                       '...'))) %>%
+
+ggplot(aes(x = reorder(pathway_short, NES), y = NES)) +
+  geom_col(aes(fill = padj)) +
+  scale_fill_viridis(direction = -1) +
+  coord_flip() +
+  labs(x = 'Pathway', 
+       y = 'Normalized Enrichment Score (NES)', 
+       fill = 'Q-Value') +
+  theme_minimal(base_size = 16)
+```
+
+
+
+
+
+
+<br><br>

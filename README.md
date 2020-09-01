@@ -80,14 +80,6 @@ The Bioinformatics Research Experience is a four-week research training program 
 
 ---
 
-## Resources and References
-
-### git
-
-### R
-
----
-
 ## BRE Material
 
 #### **July 07:** Introduction to Git
@@ -277,3 +269,11 @@ Assignment: Analyze RNA-seq
 #### **July 30** Analyze RNA-seq Day 3: Pathway Analysis
 
 - pathway analysis [demo code](RNA-seq/2020-07-30_analyze_rna-seq_day3/2020-07-29_gene_set_enrichment_analysis.Rmd) and with [in class changes](RNA-seq/2020-07-30_analyze_rna-seq_day3/2020-07-29_gene_set_enrichment_analysis_INCLASS.Rmd)
+
+---
+
+#### Example RNA-seq Analysis
+
+Here's an example RNA-seq analysis in [Rmd](RNA-seq/rnaseq_example/example_rnaseq_report.Rmd), [html](RNA-seq/rnaseq_example/example_rnaseq_report.html), and [pdf](RNA-seq/rnaseq_example/example_rnaseq_report.pdf).
+
+The count files used are posted on the server used for the course at `/mnt/data/encode_tissue_data/` and are also posted here on GitHub at [RNA-seq/rnaseq\_example/count_tables/](RNA-seq/rnaseq_example/count_tables/)
