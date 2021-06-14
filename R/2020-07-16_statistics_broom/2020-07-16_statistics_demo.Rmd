@@ -28,6 +28,8 @@ We've finally gotten to what R was meant for! Statistics!
 For testing the mean of some continuous data against a known mean.
 
 ```{r}
+iris$Sepal.Length
+
 ### significant result
 t.test(iris$Sepal.Length, mu = 10)
 
@@ -38,6 +40,8 @@ t.test(iris$Sepal.Length, mu = 5.8)
 Using `broom` functions to tidy up `t.test()`
 
 ```{r}
+t.test(iris$Sepal.Length, mu = 5) %>% class()
+
 # tidy()
 # Gets the result of the test
 t.test(iris$Sepal.Length, mu = 5) %>% tidy()
@@ -51,7 +55,7 @@ t.test(iris$Sepal.Length, mu = 5) %>% glance()
 # augment
 # Add information back to the original table. Does NOT work with all 
 # models/tests. More for when you're doing clustering like yesterday
-t.test(iris$Sepal.Length, mu = 5) %>% augment(iris) # not allowed for t.test(), but that's fine
+t.test(iris$Sepal.Length, mu = 5) %>% augment() # not allowed for t.test(), but that's fine
 ```
 
 #### Two sample t-test
@@ -141,6 +145,8 @@ Do the test
 
 ```{r}
 aov(weight ~ feed, data = chickwts)
+
+aov(weight ~ feed, data = chickwts) %>% summary()
 ```
 
 What does it look like with the different `broom` functions?
@@ -158,7 +164,7 @@ aov(weight ~ feed, data = chickwts) %>% augment()
 Tukey test explicitly compares all different functions
 
 ```{r}
-aov(weight ~ feed, data = chickwts)
+aov(weight ~ feed, data = chickwts) %>% summary()
 aov(weight ~ feed, data = chickwts) %>% TukeyHSD()
 ```
 
@@ -174,10 +180,18 @@ aov(weight ~ feed, data = chickwts) %>% TukeyHSD() %>% augment()
 
 ### Linear Model
 
+```{r}
+ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = F)
+```
+
 Do the test
 
 ```{r}
-lm(Sepal.Length ~ Sepal.Width, data = iris)
+lm(Sepal.Length ~ Sepal.Width, data = iris) #%>% summary()
+
+lm(Sepal.Width ~ Sepal.Length, data = iris) #%>% summary()
 ```
 
 What does it look like with the different `broom` functions?
@@ -189,5 +203,10 @@ lm(Sepal.Length ~ Sepal.Width, data = iris) %>% glance()
 
 lm(Sepal.Length ~ Sepal.Width, data = iris) %>% augment()
 ```
+
+
+
+<br><br>
+
 
 
