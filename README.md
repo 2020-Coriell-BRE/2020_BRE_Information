@@ -1,6 +1,6 @@
 # Coriell Bioinformatics Research Experience 2020
 
-The Bioinformatics Research Experience is a four-week research training program for undergraduate students interested in learning scientific biological data analysis. The following year's material can be seen here: [2021](https://coriell-bre.github.io/2021_Bioinformatics_Research_Experience/)
+The Bioinformatics Research Experience is a four-week research training program for undergraduate students interested in learning scientific biological data analysis. The following year's material can be seen here: [2021](https://coriell-bre.github.io/2021_BRE/)
 
 ---
 
